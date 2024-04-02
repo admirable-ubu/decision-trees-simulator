@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
 		<link rel="stylesheet" type="text/css" href="static/styles.css"/>
-        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="static/d3.v7.min.js"></script>
         <script type = "text/javascript" src="static/index.js"></script>
 		<meta charset="UTF-8">
 		<title>Binary entropy function</title>
@@ -92,6 +92,18 @@
 			  .attr("x", -height / 2)
 			  .attr("transform", "rotate(-90)")
 			  .html("Entropy")
+			  
+			// Add function graph
+			var line = d3.line()
+			  .x(d => xScale(d[0]))
+			  .y(d => yScale(d[1]))
+			svg.append("path")
+			  .datum(graphFunction())
+			  .attr("clip-path", "url(#chart-area)")
+			  .attr("fill", "none")
+			  .attr("stroke", "teal")
+			  .attr("stroke-width", 2)
+			  .attr("d", line);
 		</script>
     </body>
 </html>

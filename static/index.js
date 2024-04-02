@@ -17,18 +17,6 @@ function graphFunction() {
   return data;
 }
 
-// Add function graph
-var line = d3.line()
-  .x(d => xScale(d[0]))
-  .y(d => yScale(d[1]))
-svg.append("path")
-  .datum(graphFunction())
-  .attr("clip-path", "url(#chart-area)")
-  .attr("fill", "none")
-  .attr("stroke", "teal")
-  .attr("stroke-width", 2)
-  .attr("d", line);
-
 function calcSum()
 {
   var table = document.getElementById('table-classes');
