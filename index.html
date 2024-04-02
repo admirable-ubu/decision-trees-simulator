@@ -1,82 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" type="text/css" href="static/styles.css"/>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script type = "text/javascript" src="static/index.js"></script>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <link rel="stylesheet" href="/static/styles.css"/>
         <meta charset="UTF-8">
-        <title>Test</title>
+        <title>D3 tutorial</title>
     </head>
     <body>
-		<h1>This is only a first test displaying a tree.</h1>
+        <h1>Binary entropy function</h1>
+        <div class="container">
+            <svg id="root"></svg>
+        </div>
 
-        <script>
-            // Set the dimensions and margins of the diagram
-            var margin = {top: 40, right: 90, bottom: 50, left: 90},
-                w = 660 - margin.left - margin.right,
-                h = 500 - margin.top - margin.bottom;
+        <h1>Entropy calculator</h1>
+        <input type=button value='Add Row' onclick="addRow()" />
 
-            // append the svg object to the body of the page
-            var svg = d3.select('body').append('svg')
-                .attr('width', w + margin.left + margin.right)
-                .attr('height', h + margin.top + margin.bottom);
+        <br /><br />
 
-            // appends a 'group' element to 'svg'
-            // moves the 'group' element to the top left margin
-            var g = svg.append('g')
-                .attr('transform',
-                    'translate(' + margin.left + ',' + margin.top + ')');
+        <table cellspacing=0 cellpadding=4 id="table-classes">
+            <tbody>
+                <tr><td>Feature:</td><td>
+                <tr><td>Class 1:</td><td><input value=5 style="width:30px" type=text  maxlength=2/></td></tr>
+                <tr><td>Class 2:</td><td><input value=5 style="width:30px" type=text  maxlength=2/></td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td style="border-top:solid 1px black;">Sum:</td><td style="border-top:solid 1px black;"><div id="sum-classes">10</div></td></tr>
+            </tfoot>
+        </table>
 
-            // declares a tree layout and assigns the size
-            var tree = d3.tree()
-                .size([w, h]);
+        <br /><br />
 
-            // Assigns parent
-            var nodes = d3.hierarchy(data);
-
-            // Assigns the x and y position for the nodes
-            nodes = tree(nodes);
-
-            // adds the links between the nodes
-            var link = g.selectAll(".link")
-                .data(nodes.descendants().slice(1))
-                .enter()
-                .append("path")
-                .attr("class", "link")
-                .attr("d", (d) => {
-                    return "M" + d.x + "," + d.y
-                        + "C" + d.x + "," + (d.y + d.parent.y) / 2
-                        + " " + d.parent.x + "," + (d.y + d.parent.y) / 2
-                        + " " + d.parent.x + "," + d.parent.y;
-                })
-                .attr('fill', 'none')
-                .attr('stroke', '#ccc')
-                .attr('stroke-width', 2);
-
-            // adds each node as a group
-            var node = g.selectAll('.node')
-                .data(nodes.descendants())
-                .enter()
-                .append('g')
-                .attr('class', (d) => {
-                    return "node" +
-                        (d.children ? " node--internal" : " node--leaf");
-                })
-                .attr("transform", (d) => "translate(" + d.x + "," + d.y + ")");
-
-            // adds the circle to the node
-            node.append('circle')
-                .attr('r', 10)
-                .attr('fill', 'steelblue');
-
-            // adds the text to the node
-            node.append("text")
-                .attr("dy", 3)
-                .attr("y", (d) => d.children ? -20 : 20)
-                .style("text-anchor", (d) => d.children ? "end" : "start")
-                .text((d) => d.data.name);
-        </script>
-
-
+        <table cellspacing=0 cellpadding=4 id="table-entropy">
+            <tbody>
+                <tr><td>P(Class 1):</td><td id="p1">0.5</td></tr>
+                <tr><td>P(Class 2):</td><td id="p2">0.5</td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td style="border-top:solid 1px black;">E(feature):</td><td style="border-top:solid 1px black;"><div id="sum-entropy">1</div></td></tr>
+            </tfoot>
+        </table>
+        <input type=button value='Calculate Entropy' onclick="calcEntropy()" />
+        <script src="/static/index.js"></script>
     </body>
 </html>
