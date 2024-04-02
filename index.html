@@ -2,9 +2,10 @@
 <html lang="en">
     <head>
 		<link rel="stylesheet" type="text/css" href="static/styles.css"/>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
         <script type = "text/javascript" src="static/index.js"></script>
 		<meta charset="UTF-8">
+		<title>Binary entropy function</title>
     </head>
     <body>
         <h1>Binary entropy function</h1>
@@ -40,5 +41,57 @@
             </tfoot>
         </table>
         <input type=button value='Calculate Entropy' onclick="calcEntropy()" />
+		<script>
+			const margin = { top: 10, right: 50, bottom: 50, left: 50 },
+			width = 450 - margin.left - margin.right,
+			height = 400 - margin.top - margin.bottom;
+
+			const svg = d3.select("#root").attr("width", width + margin.left + margin.right)
+			  .attr("height", height + margin.top + margin.bottom)
+			  .append("g")
+			  .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //move the svg area
+
+			// Define chart area
+			svg
+			  .append("clipPath") // clipPath restricts region to which paint can be applied
+			  .attr("id", "chart-area")
+			  .append("rect")
+			  .attr("x", 0)
+			  .attr("y", 0)
+			  .attr("width", width)
+			  .attr("height", height)
+
+			// Add Axes
+			const xMax = 1;
+			const yMax = 1;
+
+			var xScale = d3.scaleLinear([0, xMax], [0, width])
+			var yScale = d3.scaleLinear([0, yMax], [height, 0])
+
+			var xAxis = d3.axisBottom(xScale)
+			var yAxis = d3.axisLeft(yScale)
+			svg.append("g")
+			  .attr("transform", `translate(0,${height})`)
+			  .call(xAxis)
+			svg.append("g")
+			  .attr("transform", `translate(0,0)`)
+			  .call(yAxis)
+
+			// Axes label
+			svg.append("text")
+			  .attr("class", "x label")
+			  .attr("text-anchor", "end")
+			  .attr("x", width / 2 + 5)
+			  .attr("y", height + 35)
+			  .text("p");
+
+			svg.append("text")
+			  .attr("class", "y label")
+			  .attr("text-anchor", "end")
+			  .attr("y", -35)
+			  .attr("x", -height / 2)
+			  .attr("transform", "rotate(-90)")
+			  .html("Entropy")
+		</script>
     </body>
 </html>
