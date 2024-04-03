@@ -14,7 +14,8 @@
         </div>
 
         <h1>Entropy calculator</h1>
-        <input type=button value='Add Row' onclick="addRow()" />
+        <input id='buttonAddClass' type=button value='Add Class' onclick="addClass()" />
+        <input id='buttonRemoveClass' type=button value='Remove Class' onclick="removeClass()" />
 
         <br /><br />
 
@@ -33,8 +34,8 @@
 
         <table cellspacing=0 cellpadding=4 id="table-entropy">
             <tbody>
-                <tr><td>P(Class 1):</td><td id="p1">0.5</td></tr>
-                <tr><td>P(Class 2):</td><td id="p2">0.5</td></tr>
+                <tr><td>p(Class 1):</td><td id="p1">0.5</td></tr>
+                <tr><td>p(Class 2):</td><td id="p2">0.5</td></tr>
             </tbody>
             <tfoot>
                 <tr><td style="border-top:solid 1px black;">E(feature):</td><td style="border-top:solid 1px black;"><div id="sum-entropy">1</div></td></tr>
