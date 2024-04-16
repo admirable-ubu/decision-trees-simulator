@@ -153,6 +153,51 @@
 			  .attr("stroke", "teal")
 			  .attr("stroke-width", 2)
 			  .attr("d", line);
+			  
+			function drawPoint(data, tableEntropy) {
+				// FInd the closest data point to the x-value of p(Class 1)
+				var targetValue = tableEntropy.tBodies[0].rows[0].cells[1].innerHTML;
+				var closest = data[0][0];
+				var closestPoint = data[0];
+				// Assume the first number is the closest
+				var closestDiff = Math.abs(targetValue - closest);
+
+				// Calculate the difference between the target and closest
+				for (var i = 0; i < data.length; i++) {
+					var current = data[i][0];
+					var currentDiff = Math.abs(targetValue - current);
+
+					// Calculate the difference between the target and current number
+					if (currentDiff < closestDiff) {
+						// Update the closest number
+						closestPoint = data[i];
+
+						// Update the closest difference
+						closestDiff = currentDiff;
+					}
+
+				}
+				points = [[closestPoint[0], closestPoint[1]], [closestPoint[0], 0]];
+
+				// Draw point on x-axis
+				svg.append("circle")
+					.attr("r", 3)
+					.attr("fill", "red")
+					.style("stroke", "red")
+					.attr("opacity", .70)
+					.attr("cx", xScale(points[0][0]))
+					.attr("cy", yScale(0));
+
+				// Draw line between point and entropy graph
+				svg.append("path")
+					.datum(points)
+					.attr("fill", "red")
+					.attr("stroke", "red")
+					.attr("stroke-width", 1)
+					.attr("opacity", .70)
+					.attr("d", line)
+					.attr("id", "pointLine");
+			}
 		</script>
 		
     </body>
