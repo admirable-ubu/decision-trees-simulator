@@ -1,3 +1,5 @@
-.svg-container {
-    background-color: #FFC988;
-}
+  .table-wrapper {
+    max-height: 350px;
+    overflow: auto;
+    display:inline-block;
+  }
