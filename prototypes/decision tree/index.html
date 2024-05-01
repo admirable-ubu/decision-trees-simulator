@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script type="text/javascript" src="js/index.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row p-2">
+            <!-- Data table -->
+            <div class="col-auto">
+                <table class="table caption-top ">
+                    <caption>Example data</caption>
+                    <thead>
+                        <tr>
+                            <th style="border-right: 1px solid black;">#</th>
+                            <th>Outlook</th>
+                            <th>Temperature</th>
+                            <th>Humidity</th>
+                            <th>Windy</th>
+                            <th style="border-left: 1px solid black;">Play Golf</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr>
+                            <td style="border-right: 1px solid black;">1</td>
+                            <td>Sunny</td>
+                            <td>Hot</td>
+                            <td>High</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">No</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">2</td>
+                            <td>Sunny</td>
+                            <td>Hot</td>
+                            <td>High</td>
+                            <td>True</td>
+                            <th style="border-left: 1px solid black;">No</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">3</td>
+                            <td>Overcast</td>
+                            <td>Hot</td>
+                            <td>High</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">4</td>
+                            <td>Rainy</td>
+                            <td>Mild</td>
+                            <td>High</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">5</td>
+                            <td>Rainy</td>
+                            <td>Cool</td>
+                            <td>Normal</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">6</td>
+                            <td>Rainy</td>
+                            <td>Cool</td>
+                            <td>Normal</td>
+                            <td>True</td>
+                            <th style="border-left: 1px solid black;">No</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">7</td>
+                            <td>Overcast</td>
+                            <td>Cool</td>
+                            <td>Normal</td>
+                            <td>True</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">8</td>
+                            <td>Sunny</td>
+                            <td>Mild</td>
+                            <td>High</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">No</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">9</td>
+                            <td>Sunny</td>
+                            <td>Cool</td>
+                            <td>Normal</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">10</td>
+                            <td>Rainy</td>
+                            <td>Mild</td>
+                            <td>Normal</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">11</td>
+                            <td>Sunny</td>
+                            <td>Mild</td>
+                            <td>Normal</td>
+                            <td>True</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">12</td>
+                            <td>Overcast</td>
+                            <td>Mild</td>
+                            <td>High</td>
+                            <td>True</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr>
+                            <td style="border-right: 1px solid black;">13</td>
+                            <td>Overcast</td>
+                            <td>Hot</td>
+                            <td>Normal</td>
+                            <td>False</td>
+                            <th style="border-left: 1px solid black;">Yes</th>
+                        </tr>
+                        <tr style="border-bottom: hidden;">
+                            <td style="border-right: 1px solid black;">14</td>
+                            <td>Rainy</td>
+                            <td>Mild</td>
+                            <td>High</td>
+                            <td>True</td>
+                            <th style="border-left: 1px solid black;">No</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Decision Tree -->
+            <div class="col-auto">
+                <div class="svg-container">
+                    <svg viewBox="0 0 500 500">
+                        <g id="g0">
+                            <a type="button" class="btn-primary" onclick="hideChildren(this)" href="#" style="text-decoration: none">
+                                <ellipse id="n0" rx="12%" ry="5%" cx="50%" cy="-6%" style="fill:white;stroke:blue;stroke-width: 2;" />
+                                <text x="41%" y="-4%" font-size="25" fill="black">Outlook</text>
+                            </a>
+                        </g>
+                        <g id="g1">
+                            <path id="e1" d="M88 108 200 -15" stroke-width="1" stroke="black" data-connected-to="n0"/>
+                            <text>
+                                <textPath href="#e1" startOffset="25%">
+                                    <tspan font-size="16" dy="-1%">Overcast</tspan>
+                                </textPath>
+                            </text>
+
+                            <ellipse id="n1" rx="5%" ry="4%" cx="15%" cy="25%" style="fill:white;stroke:black" />
+                            <text x="12%" y="26%" font-size="20" fill="black">Yes</text>
+                        </g>
+                        <g id="g2">
+                            <path id="e2" d="M250 -4 250 100" stroke-width="1" stroke="black" data-connected-to="n0"/>
+                            <text>
+                                <textPath href="#e2" startOffset="25%">
+                                    <tspan font-size="16" dy="-1%">Sunny</tspan>
+                                </textPath>
+                            </text>
+
+                            <a type="button" class="btn-primary" onclick="hideChildren(this)" href="#" style="text-decoration: none">
+                                <ellipse id="n2" rx="12%" ry="5%" cx="50%" cy="25%" style="fill:white;stroke:blue;stroke-width: 2;" />
+                                <text x="41%" y="26.5%" font-size="23" fill="black">Humidity</text>
+                            </a>
+                        </g>
+                        <g id="g3">
+                            <path id="e3" d="M210 250 230 149" stroke-width="1" stroke="black" data-connected-to="n2"/>
+                            <text>
+                                <textPath href="#e3" startOffset="37%">
+                                    <tspan font-size="16" dy="-1%">High</tspan>
+                                </textPath>
+                            </text>
+
+                            <ellipse id="n3" rx="5%" ry="4%" cx="41%" cy="54%" style="fill:white;stroke:black" />
+                            <text x="38.5%" y="55%" font-size="20" fill="black">No</text>
+                        </g>
+                        <g id="g4">
+                            <path id="e4" d="M270 149 290 250" stroke-width="1" stroke="black" data-connected-to="n2"/>
+                            <text>
+                                <textPath href="#e4" startOffset="30%">
+                                    <tspan font-size="16" dy="-1%">Normal</tspan>
+                                </textPath>
+                            </text>
+
+                            <ellipse id="n4" rx="5%" ry="4%" cx="59%" cy="54%" style="fill:white;stroke:black" />
+                            <text x="56%" y="55%" font-size="20" fill="black">Yes</text>
+                        </g>
+                        <g id="g5">
+                            <path id="e5" d="M297 -15 380 108" stroke-width="1" stroke="black" data-connected-to="n0"/>
+                            <text>
+                                <textPath href="#e5" startOffset="40%">
+                                    <tspan font-size="16" dy="-1%">Rainy</tspan>
+                                </textPath>
+                            </text>
+
+                            <a type="button" class="btn-primary" onclick="hideChildren(this)" href="#" style="text-decoration: none">
+                                <ellipse id="n5" rx="12%" ry="5%" cx="85%" cy="25%" style="fill:white;stroke:blue;stroke-width: 2;" />
+                                <text x="78%" y="26.5%" font-size="23" fill="black">Windy</text>
+                            </a>
+                        </g>
+                        <g id="g6">
+                            <path id="e6" d="M390 250 400 147" stroke-width="1" stroke="black" data-connected-to="n5"/>
+                            <text>
+                                <textPath href="#e6" startOffset="37%">
+                                    <tspan font-size="16" dy="-1%">True</tspan>
+                                </textPath>
+                            </text>
+
+                            <ellipse id="n6" rx="5%" ry="4%" cx="77%" cy="54%" style="fill:white;stroke:black" />
+                            <text x="74.5%" y="55%" font-size="20" fill="black">No</text>
+                        </g>
+                        <g id="g7">
+                            <path id="e7" d="M450 147 460 250" stroke-width="1" stroke="black" data-connected-to="n5"/>
+                            <text>
+                                <textPath href="#e7" startOffset="32%">
+                                    <tspan font-size="16" dy="-1%">False</tspan>
+                                </textPath>
+                            </text>
+
+                            <ellipse id="n7" rx="5%" ry="4%" cx="93%" cy="54%" style="fill:white;stroke:black" />
+                            <text x="90%" y="55%" font-size="20" fill="black">Yes</text>
+                        </g>
+
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

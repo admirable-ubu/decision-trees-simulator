@@ -1,0 +1,11 @@
+svg {
+    width: 95%;
+    height: 95%;
+}
+
+.svg-container {
+    width: 450px;
+    height: 650px;
+    /* resize: both; */
+    overflow: auto;
+}
