@@ -2,7 +2,7 @@ function createRemoveButton() {
     var removeButton = document.createElement("div");
     removeButton.classList.add("btn");
     removeButton.classList.add("btn-outline-danger");
-    removeButton.setAttribute("onclick", "removeClass()");
+    removeButton.setAttribute("id", "btnRemoveClass");
     removeButton.textContent = "-";
     return removeButton;
 }
@@ -33,7 +33,6 @@ function addClass() {
     newLabel.classList.add("form-control-plaintext");
     newLabel.textContent = "Class " + +cCount + ":";
     cCell.appendChild(newLabel);
-    cCell.setAttribute("style", "border-bottom: hidden");
 
     // Value (Number of instances) cell
     cValueCell.id = "c" + cCount;
@@ -54,6 +53,7 @@ function addClass() {
 
     // remove "Class remove button" of previous input group so that there is only one
     if (tBodyRefClasses.rows.length >= 4) {
+        document.querySelector('#btnRemoveClass').removeEventListener('click', removeClass);
         var cell = tBodyRefClasses.rows[tBodyRefClasses.rows.length - 2].cells[1]
         var inputG = cell.getElementsByTagName("div")[0];
         var input = inputG.getElementsByTagName("input")[0];
@@ -62,6 +62,8 @@ function addClass() {
         cell.removeChild(inputG);
         cell.appendChild(input);
     }
+    
+    document.querySelector('#btnRemoveClass').addEventListener('click', removeClass);
 
     // Entropy table
     var pCount = +tBodyRefEntropy.rows[tBodyRefEntropy.rows.length - 1].cells[1].id[1] + 1;
@@ -85,13 +87,11 @@ function removeClass() {
 
     if (numClassesBefore === 2) throw new Error("No classes can be removed if there are only 2 left");
 
+    document.querySelector('#btnRemoveClass').removeEventListener('click', removeClass);
     tableClasses.deleteRow(numClassesBefore);
     tableEntropy.deleteRow(numClassesBefore - 1);
 
     var numClassesAfter = tBodyRefClasses.rows.length;
-
-    // remove border under class cell of the new last row
-    tBodyRefClasses.rows[numClassesAfter - 1].cells[0].setAttribute("style", "border-bottom: hidden");
 
     // add "Class remove button" to the now last row
     if (numClassesAfter >= 3) {
@@ -107,6 +107,8 @@ function removeClass() {
         inputGroup.appendChild(removeButton);
 
         cell.appendChild(inputGroup);
+
+        document.querySelector('#btnRemoveClass').addEventListener('click', removeClass);
     }
 
     // Display info alert for calculating the Entropy with more than 2 classes
@@ -116,6 +118,4 @@ function removeClass() {
     }
 }
 
-if (typeof module === 'object') {
-    module.exports = {addClass, removeClass};
-}
+export { addClass, removeClass };

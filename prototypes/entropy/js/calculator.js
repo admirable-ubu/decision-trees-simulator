@@ -1,3 +1,6 @@
+import { checkInput } from '../../../lib/input-check.js';
+import { entropy } from '../../../lib/entropy-calculator.js';
+
 function E(x) {
     if (x < 0 || x > 1.00001) throw new Error("The Binary Entropy function was tried to be calculated with an invalid x value input");
 
@@ -21,7 +24,7 @@ function graphFunction() {
     return data;
 }
 
-function calcSum(inputElements){
+function calcSum(inputElements) {
     var sum = 0;
     for (const element of inputElements) {
         sum += parseInt(element.value, 10);
@@ -77,74 +80,8 @@ function drawPoint(data, tableEntropy) {
     }
     var points = [[closestPoint[0], closestPoint[1]], [closestPoint[0], 0]];
 
-    // Draw point on x-axis
-    svg.append("circle")
-        .attr("r", 3)
-        .attr("fill", "red")
-        .style("stroke", "red")
-        .attr("opacity", .70)
-        .attr("cx", xScale(points[0][0]))
-        .attr("cy", yScale(0));
+    return points;
 
-    // Draw line between point and entropy graph
-    svg.append("path")
-        .datum(points)
-        .attr("fill", "red")
-        .attr("stroke", "red")
-        .attr("stroke-width", 1)
-        .attr("opacity", .70)
-        .attr("d", line)
-        .attr("id", "pointLine");
-}
-
-function checkInput(instanceVals) {
-    var invalidVal = false;
-    var emptyInput = false;
-    
-    // Check if there are any negative values or empty inputs
-    for (const instanceVal of instanceVals) {
-        var value = instanceVal.value;
-        if (value < 0 || isNaN(value) || value % 1 !== 0) invalidVal = true;
-        if (value == "") emptyInput = true;
-    }
-
-    try {
-        // If there are errors, display alerts and cancel the calculation
-        if (invalidVal && emptyInput) throw ['#alert-invalid-val', '#alert-empty-input'];
-        if (invalidVal) throw ['#alert-invalid-val'];
-        if (emptyInput) throw ['#alert-empty-input'];
-
-    } catch (errors) {
-        // Display all alerts
-        errors.forEach(error => {
-            $(error).removeClass('d-none');
-        });
-        // If only one error is found, remove the alert for the other in case it occurred before and has now been fixed
-        if (errors.length === 1) {
-            if (errors[0] == '#alert-invalid-val') {
-                $('#alert-empty-input').addClass('d-none');
-            } else {
-                $('#alert-invalid-val').addClass('d-none');
-            }
-
-        }
-        // If the alert for all-0 values is still being displayed:
-        // hide it now that it is not all-0 values anymore
-        $('#alert-sum-0').addClass('d-none');
-        return 1;
-    }
-    return 0;
-}
-
-function entropy(pValues){
-    var entropy = 0;
-    for (const pValue of pValues) {
-        entropy -= pValue * Math.log2(pValue);
-    }
-    if (isNaN(entropy)) {
-        entropy = 0;
-    }
-    return entropy;
 }
 
 function calcEntropy() {
@@ -166,10 +103,6 @@ function calcEntropy() {
     // Calculate the probabilities
     var pValues = calcProbs(inputElements, sum);
 
-    // Remove the previous point and line
-    svg.select("#pointLine").remove();
-    svg.selectAll("circle").remove();
-
     var e = entropy(pValues);
 
     var output = document.getElementById('sum-entropy');
@@ -180,10 +113,10 @@ function calcEntropy() {
     var numberClasses = tableClasses.getElementsByTagName('tbody')[0].rows.length;
     if (numberClasses === 2) {
         var data = graphFunction();
-        drawPoint(data, tableEntropy);
+        return drawPoint(data, tableEntropy);
+    } else{
+        return null;
     }
 }
 
-if (typeof module === 'object') {
-    module.exports = {E, graphFunction, calcSum, calcProbs, checkInput, entropy};
-}
+export { E, graphFunction, calcSum, calcProbs, entropy, calcEntropy, checkInput };

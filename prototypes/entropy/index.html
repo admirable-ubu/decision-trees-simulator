@@ -4,8 +4,12 @@
 <head>
     <script src="lib/d3.v7.min.js"></script>
     <script src="lib/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="js/calculator.js"></script>
-    <script type="text/javascript" src="js/classNumHandler.js"></script>
+    <script type="module" src="../../lib/input-check.js"></script>
+    <script type="module" src="../../lib/entropy-calculator.js"></script>
+    <script type="module" src="js/calculator.js"></script>
+    <script type="module" src="js/classNumHandler.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="css/styles.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -20,16 +24,84 @@
 </head>
 
 <body>
-    <div class="container p-3">
-        <div class="row p-2">
-            <div class="card bg-light mx-auto">
-                <div class="card-body ">
-                    <p class="card-title fs-4">Entropy</p>
-                    <p class="card-text fw-light">In information theory, the entropy of a random variable is the average
-                        level of
-                        "information", "surprise", or "uncertainty"...</p>
-                    <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)"
-                        class="btn btn-outline-dark ">Learn more</a>
+    <!-- Header -->
+    <header class="py-3 mb-4 border-bottom bg-body-secondary bg-opacity-75 ">
+        <div class="container d-flex flex-wrap align-items-center justify-content-center ">
+            <a href="https://www.ubu.es" class="d-flex align-items-center me-2 ">
+                <img src="img/ubulogocolorfull.png" width="100" height="50">
+            </a>
+            <span class="fw-bold fs-5 ms-2 me-2 ">Decision Tree Simulator</span>
+            <ul class="nav me-auto mx-auto">
+                <li class="nav-item">
+                    <a href="../entropy/" class="nav-link link-dark px-2 opacity-50 ">Entropy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../conditional entropy/" class="nav-link link-dark px-2 link-opacity-50-hover ">Conditional
+                        Entropy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../decision tree/" class="nav-link link-dark px-2 link-opacity-50-hover ">Decision Tree
+                        ID3</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <div class="container pb-2">
+        <!-- Info card -->
+        <div class="row-auto p-2 pb-4">
+            <div class="accordion" id="accordionInfo">
+                <div class="card bg-light mx-auto ">
+                    <!-- General Info -->
+                    <div class="card-header fs-6" id="generalInfo">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#generalInfoEntropy" aria-expanded="false"
+                            aria-controls="generalInfoEntropy">
+                            General Information
+                        </a>
+                    </div>
+                    <div class="collapse" id="generalInfoEntropy" aria-labelledby="generalInfo"
+                        data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-light">
+                                In information theory, the entropy is a measure of impurity, uncertainty or randomness
+                                in a dataset.
+                                In datasets with binary classes, where variables can only have two possible outcome
+                                values,
+                                the entropy value lies between 0 and 1, inclusive. The higher the entropy, the more
+                                impure the dataset is.
+                            </p>
+                            <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)"
+                                class="btn btn-outline-dark ">Learn more</a>
+                        </div>
+                    </div>
+                    <!-- Calculation -->
+                    <div class="card-header fs-6" id="calculation">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#calcInfoEntropy" aria-expanded="false"
+                            aria-controls="calcInfoEntropy">
+                            Calculation
+                        </a>
+                    </div>
+                    <div class="collapse" id="calcInfoEntropy" aria-labelledby="calculation"
+                        data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-light"></p>
+                            The entropy of a dataset with respect to a target variable is calculated using the
+                            following formula:
+                            </p>
+                            <p class="card-text fw-light">
+                                \(E(X) = - \sum_{i=1}^{n} (p_i \log_2(p_i)) ;\)
+                            </p>
+                            <p class="card-text fw-light">
+                                Where:
+                            </p>
+                            <ul class="card-text fw-light">
+                                <li>\(X\) is the dataset.</li>
+                                <li>\(n\) is the number of classes.</li>
+                                <li>\(p_i\) is the proportion of instances belonging to class \(i\).</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,7 +168,7 @@
                         <div class="table-wrapper">
                             <table class="table caption-top table-hover" id="table-classes">
                                 <caption>Feature: </caption>
-                                <thead>
+                                <thead class="sticky-top">
                                     <tr>
                                         <th>Classes</th>
                                         <th>Nr. of instances</th>
@@ -109,7 +181,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="border-bottom: hidden;"><label class="form-control-plaintext ">Class
+                                        <td><label class="form-control-plaintext ">Class
                                                 2:</label></td>
                                         <td id="c2">
                                             <input value=5 style="width:100px" type=text class="form-control" />
@@ -119,7 +191,12 @@
                                 <tfoot style="border-bottom: hidden;">
                                     <tr>
                                         <td>
-                                            <div class="btn btn-outline-primary" onclick="addClass()">Add Class</div>
+                                            <div id="btnAddClass" class="btn btn-outline-primary" >+</div>
+                                            <script type="module">
+                                                import { addClass } from './js/classNumHandler.js';
+
+                                                document.querySelector('#btnAddClass').addEventListener('click', addClass);
+                                            </script>
                                         </td>
                                         <td class="table-group-divider">
                                             <div id="sum-classes">10</div>
@@ -127,6 +204,8 @@
                                     </tr>
                                 </tfoot>
                             </table>
+                        </div>
+                        <div id="btnCalculateEntropy" class="btn btn-primary ">Calculate Entropy
                         </div>
                     </div>
 
@@ -151,12 +230,6 @@
                                             <div id="sum-entropy">1</div>
                                         </td>
                                     </tr>
-                                    <tr style="border-top: hidden;">
-                                        <td>
-                                            <div class="btn btn-outline-dark " onclick="calcEntropy()">Calculate Entropy
-                                            </div>
-                                        </td>
-                                    </tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -165,7 +238,32 @@
             </div>
         </div>
     </div>
-    <script>
+    <!-- Footer -->
+    <footer class="py-3 mt-2 border-top bg-body-tertiary ">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <div class="col-md-4 col-auto d-flex align-items-center">
+                <ul class="flex-column">
+                    <span class="fw-bold ">Authors:</span>
+                    <li class="mb-2 mt-2" style="list-style-type: none;">
+                        <span>Daniel Drefs Fernandes</span>
+                    </li>
+                    <li class="mb-2" style="list-style-type: none;">
+                        <span>Carlos López Nozal</span>
+                    </li>
+                    <li class="mb-2" style="list-style-type: none;">
+                        <span>Ismael Ramos Pérez</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-auto d-flex align-items-center">
+                <span class="fw-light">Last edited: 12-05-2024</span>
+            </div>
+        </div>
+    </footer>
+    <script type="module">
+        import {graphFunction, calcEntropy} from './js/calculator.js';
+
+        // Function graph creation with D3.js
         const margin = { top: 10, right: 50, bottom: 50, left: 50 },
             width = 450 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
@@ -229,6 +327,46 @@
             .attr("stroke", "teal")
             .attr("stroke-width", 2)
             .attr("d", line);
+
+        function drawNewPoint(points) {
+            // Draw point on x-axis
+            svg.append("circle")
+                .attr("r", 3)
+                .attr("fill", "red")
+                .style("stroke", "red")
+                .attr("opacity", .70)
+                .attr("cx", xScale(points[0][0]))
+                .attr("cy", yScale(0));
+        }
+        
+        function drawNewLine(points) {
+            // Draw line between point and entropy graph
+            svg.append("path")
+                .datum(points)
+                .attr("fill", "red")
+                .attr("stroke", "red")
+                .attr("stroke-width", 1)
+                .attr("opacity", .70)
+                .attr("d", line)
+                .attr("id", "pointLine");
+        }
+
+        function removePointLine() {
+            // Remove the previous point and line
+            svg.select("#pointLine").remove();
+            svg.selectAll("circle").remove();
+        }
+
+        function triggerCalcEntropy() {
+            removePointLine();
+            var points = calcEntropy();
+            if (points != null) {
+                drawNewPoint(points);
+                drawNewLine(points);
+            }
+        }
+
+        document.querySelector('#btnCalculateEntropy').addEventListener('click', triggerCalcEntropy);
     </script>
 </body>
 
