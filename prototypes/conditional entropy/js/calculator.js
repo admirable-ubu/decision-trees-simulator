@@ -1,3 +1,6 @@
+import { checkInput } from '../../../lib/input-check.js';
+import { entropy } from '../../../lib/entropy-calculator.js';
+
 function calcRatio(tBodyRef, instanceVals) {
     var sum = 0;
     var rowSums = [];
@@ -46,60 +49,20 @@ function calcEntropyCat(rowSums, tBodyRef, instanceVals) {
     // Calculate the Entropy for each category
     var entropies = [];
     for (i = 0; i < rowSums.length; i++) {
-        var entropy = 0;
+        var e = 0;
         // Entropy is 0 if there are no instances belonging to one of the classes
         if (rowValues[i][0] !== 0 && rowValues[i][1] !== 0) {
-            for (var j = 0; j < 2; j++) {
-                entropy -= (rowValues[i][j] / rowSums[i]) * Math.log2(rowValues[i][j] / rowSums[i]);
-            }
+            var pValues = [rowValues[i][0] / rowSums[i], rowValues[i][1] / rowSums[i]];
+            e = entropy(pValues);
         }
 
         var entropyCell = tBodyRef.getElementsByTagName('tr')[i].getElementsByTagName('td')[4];
         var entropyLabel = entropyCell.getElementsByTagName('label')[0];
-        entropyLabel.textContent = entropy;
-        entropies.push(entropy);
+        entropyLabel.textContent = e;
+        entropies.push(e);
     }
     return entropies;
 
-}
-
-function checkInput(instanceVals) {
-    var invalidVal = false;
-    var emptyInput = false;
-
-    // Check if there are any negative values or empty inputs
-    for (const instanceVal of instanceVals) {
-        var value = instanceVal.value;
-        if (value < 0 || isNaN(value) || value % 1 !== 0) invalidVal = true;
-        if (value == "") emptyInput = true;
-    }
-
-    try {
-        // If there are errors, display alerts and cancel the calculation
-        if (invalidVal && emptyInput) throw ['#alert-invalid-val', '#alert-empty-input'];
-        if (invalidVal) throw ['#alert-invalid-val'];
-        if (emptyInput) throw ['#alert-empty-input'];
-
-    } catch (errors) {
-        // Display all alerts
-        errors.forEach(error => {
-            $(error).removeClass('d-none');
-        });
-        // If only one error is found, remove the alert for the other in case it occurred before and has now been fixed
-        if (errors.length === 1) {
-            if (errors[0] == '#alert-invalid-val') {
-                $('#alert-empty-input').addClass('d-none');
-            } else {
-                $('#alert-invalid-val').addClass('d-none');
-            }
-
-        }
-        // If the alert for all-0 values is still being displayed:
-        // hide it now that it is not all-0 values anymore
-        $('#alert-sum-0').addClass('d-none');
-        return 1;
-    }
-    return 0;
 }
 
 function calcCondEntropy() {
@@ -129,6 +92,4 @@ function calcCondEntropy() {
     document.getElementById('ce').textContent = condEntropy;
 }
 
-if (typeof module === 'object') {
-    module.exports = {calcRatio, calcEntropyCat, checkInput, calcCondEntropy};
-}
+export { calcRatio, calcEntropyCat, calcCondEntropy };

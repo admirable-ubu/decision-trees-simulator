@@ -2,7 +2,7 @@ function createRemoveButton() {
     var removeButton = document.createElement("div");
     removeButton.classList.add("btn");
     removeButton.classList.add("btn-outline-danger");
-    removeButton.setAttribute("onclick", "removeCategory()");
+    removeButton.setAttribute("id", "btnRemoveCategory");
     removeButton.textContent = "-";
     return removeButton;
 }
@@ -13,6 +13,8 @@ function removeCategory() {
 
     if (tBodyRef.rows.length === 2) throw new Error("No categories can be removed if there are only 2 left");
 
+    
+    document.querySelector('#btnRemoveCategory').removeEventListener('click', removeCategory);
     table.deleteRow(tBodyRef.rows.length);
 
     // add "Category remove button" to the now last row
@@ -21,6 +23,7 @@ function removeCategory() {
 
         var cell = tBodyRef.rows[tBodyRef.rows.length - 1].cells[0]
         cell.appendChild(removeButton);
+        document.querySelector('#btnRemoveCategory').addEventListener('click', removeCategory);
     }
 }
 
@@ -76,12 +79,13 @@ function addCategory() {
 
     // remove "Category remove button" of previous input group so that there is only one
     if (tBodyRef.rows.length >= 4) {
+        document.querySelector('#btnRemoveCategory').removeEventListener('click', removeCategory);
         var cell = tBodyRef.rows[tBodyRef.rows.length - 2].cells[0]
         var button = cell.getElementsByTagName("div")[0];
         cell.removeChild(button);
     }
+    document.querySelector('#btnRemoveCategory').addEventListener('click', removeCategory);
 }
 
-if (typeof module === 'object') {
-    module.exports = {addCategory, removeCategory};
-}
+export { addCategory, removeCategory }
+export default addCategory;

@@ -4,8 +4,12 @@
 <head>
     <link rel="stylesheet" href="css/styles.css" />
     <script src="lib/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="js/calculator.js"></script>
-    <script type="text/javascript" src="js/catNumHandler.js"></script>
+    <script type="module" src="../../lib/input-check.js"></script>
+    <script type="module" src="../../lib/entropy-calculator.js"></script>
+    <script type="module" src="js/catNumHandler.js"></script>
+    <script type="module" src="js/calculator.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -18,16 +22,106 @@
 </head>
 
 <body>
-
-    <div class="container p-3">
-        <div class="row p-2">
-            <div class="card bg-light mx-auto">
-                <div class="card-body ">
-                    <p class="card-title fs-4">Conditional Entropy</p>
-                    <p class="card-text fw-light">In information theory, the conditional entropy quantifies the amount
-                        of information needed to describe the outcome of a random variable Y given that...</p>
-                    <a href="https://en.wikipedia.org/wiki/Conditional_entropy" class="btn btn-outline-dark ">Learn
-                        more</a>
+    <!-- Header -->
+    <header class="py-3 mb-4 border-bottom bg-body-secondary bg-opacity-75 ">
+        <div class="container d-flex flex-wrap align-items-center justify-content-center ">
+            <a href="https://www.ubu.es" class="d-flex align-items-center me-2 ">
+                <img src="img/ubulogocolorfull.png" width="100" height="50">
+            </a>
+            <span class="fw-bold fs-5 ms-2 me-2 ">Decision Tree Simulator</span>
+            <ul class="nav me-auto mx-auto">
+                <li class="nav-item">
+                    <a href="../entropy/" class="nav-link link-dark px-2 link-opacity-50-hover ">Entropy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../conditional entropy/" class="nav-link link-dark px-2 opacity-50 ">Conditional
+                        Entropy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../decision tree/" class="nav-link link-dark px-2 link-opacity-50-hover ">Decision Tree
+                        ID3</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <div class="container pb-2">
+        <!-- Info card -->
+        <div class="row-auto p-2 pb-4">
+            <div class="accordion" id="accordionInfo">
+                <div class="card bg-light mx-auto ">
+                    <!-- General Info -->
+                    <div class="card-header fs-6" id="generalInfo">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#generalInfoCondEntropy" aria-expanded="false"
+                            aria-controls="generalInfoCondEntropy">
+                            General Information
+                        </a>
+                    </div>
+                    <div class="collapse" id="generalInfoCondEntropy" aria-labelledby="generalInfo"
+                        data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-light">
+                                Conditional entropy is a measure of the amount of impurity, uncertainty or randomness
+                                remaining in a random variable given that another random variable is known.
+                            <p class="card-text fw-light">
+                                In the context of classification problems, conditional entropy quantifies the
+                                uncertainty of a target variable \( Y \), which describes the set of class labels, given
+                                a value/category \( x \) of the attribute/feature \( X \).
+                            </p>
+                            <a href="https://en.wikipedia.org/wiki/Conditional_entropy"
+                                class="btn btn-outline-dark ">Learn more</a>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Calculation -->
+                    <div class="card-header fs-6" id="calculation">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#calcInfoCondEntropy" aria-expanded="false"
+                            aria-controls="calcInfoCondEntropy">
+                            Calculation
+                        </a>
+                    </div>
+                    <div class="collapse" id="calcInfoCondEntropy" aria-labelledby="calculation"
+                        data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-light">
+                            <p class="card-text fw-light">
+                                For a binary classification problem, conditional entropy \( E(Y|X) \) is calculated
+                                using the following formula:
+                            </p>
+                            <p class="card-text fw-light">
+                                \[ E(Y|X) = \sum_{x \in X} p(x) E(Y|X = x) \]
+                            </p>
+                            <p class="card-text fw-light">
+                                Where:
+                            </p>
+                            <ul class="card-text fw-light">
+                                <li>\( X \) is the set of values/categories for the first attribute/feature.</li>
+                                <li>\( Y \) is the set of values for the class labels.</li>
+                                <li>\( p(x) \) is the proportion between the number of instances with the value \( x \)
+                                    and the size of the dataset.</li>
+                            </ul>
+                            <p class="card-text fw-light">
+                                Calculating the conditional entropies for the individual values \( x \) of attribute \(
+                                X \) (depicted as \( E(Category) \) in the calculator below) is possible with the
+                                following formula:
+                            </p>
+                            <p class="card-text fw-light">
+                                \[ E(Y|X = x) = - \sum_{y \in Y} p(y|x) log_2(p(y|x)) \]
+                            </p>
+                            <p class="card-text fw-light">
+                                Where:
+                            </p>
+                            <ul class="card-text fw-light">
+                                <li>\( p(y|x) \) is the proportion of instances in the dataset with attribute
+                                    value \( x \) that also have the class value \( y \).</li>
+                            </ul>
+                            <p class="card-text fw-light">
+                                It sums over all the possible values of the target variable \( Y \).
+                            </p>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,7 +163,7 @@
                     <div class="table-wrapper">
                         <table class="table caption-top" id="table-cond-entropy">
                             <caption>Feature: </caption>
-                            <thead>
+                            <thead class="sticky-top">
                                 <tr>
                                     <th></th>
                                     <th>Class 1</th>
@@ -100,15 +194,26 @@
                             <tfoot>
                                 <tr style="border-bottom: hidden;">
                                     <td>
-                                        <div class="btn btn-outline-primary " onclick="addCategory()">+</div>
+                                        <div id="btnAddCategory" class="btn btn-outline-primary ">+</div>
+                                        <script type="module">
+                                            import addCategory from './js/catNumHandler.js';
+
+                                            document.querySelector('#btnAddCategory').addEventListener('click', addCategory);
+                                        </script>
                                     </td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
                                     <td>
-                                        <div class="btn btn-outline-dark " onclick="calcCondEntropy()">Calculate Entropy
+                                        <div id="btnCalculateCondEntropy" class="btn btn-primary " >Calculate Conditional
+                                            Entropy
                                         </div>
+                                        <script type="module">
+                                            import { calcCondEntropy } from './js/calculator.js';
+
+                                            document.querySelector('#btnCalculateCondEntropy').addEventListener('click', calcCondEntropy);
+                                        </script>
                                     </td>
 
                                 </tr>
@@ -119,6 +224,28 @@
             </div>
         </div>
     </div>
+    <!-- Footer -->
+    <footer class="py-3 mt-2 border-top bg-body-tertiary  ">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center ">
+            <div class="col-md-4 col-auto d-flex align-items-center">
+                <ul class="flex-column">
+                    <span class="fw-bold ">Authors:</span>
+                    <li class="mb-2 mt-2" style="list-style-type: none;">
+                        <span>Daniel Drefs Fernandes</span>
+                    </li>
+                    <li class="mb-2" style="list-style-type: none;">
+                        <span>Carlos López Nozal</span>
+                    </li>
+                    <li class="mb-2" style="list-style-type: none;">
+                        <span>Ismael Ramos Pérez</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-auto d-flex align-items-center">
+                <span class="fw-light">Last edited: 16-05-2024</span>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>
