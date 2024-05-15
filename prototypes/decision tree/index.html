@@ -3,13 +3,19 @@
 
 <head>
     <link rel="stylesheet" href="css/styles.css" />
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="module" src="../../lib/entropy-calculator.js"></script>
+    <script type="module" src="js/stepbystep.js"></script>
+    <script type="module" src="js/tree.js"></script>
+    <script type="module" src="js/table.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,234 +23,307 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="row p-2">
-            <!-- Data table -->
-            <div class="col-auto">
-                <table class="table caption-top ">
-                    <caption>Example data</caption>
-                    <thead>
-                        <tr>
-                            <th style="border-right: 1px solid black;">#</th>
-                            <th>Outlook</th>
-                            <th>Temperature</th>
-                            <th>Humidity</th>
-                            <th>Windy</th>
-                            <th style="border-left: 1px solid black;">Play Golf</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                        <tr>
-                            <td style="border-right: 1px solid black;">1</td>
-                            <td>Sunny</td>
-                            <td>Hot</td>
-                            <td>High</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">No</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">2</td>
-                            <td>Sunny</td>
-                            <td>Hot</td>
-                            <td>High</td>
-                            <td>True</td>
-                            <th style="border-left: 1px solid black;">No</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">3</td>
-                            <td>Overcast</td>
-                            <td>Hot</td>
-                            <td>High</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">4</td>
-                            <td>Rainy</td>
-                            <td>Mild</td>
-                            <td>High</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">5</td>
-                            <td>Rainy</td>
-                            <td>Cool</td>
-                            <td>Normal</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">6</td>
-                            <td>Rainy</td>
-                            <td>Cool</td>
-                            <td>Normal</td>
-                            <td>True</td>
-                            <th style="border-left: 1px solid black;">No</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">7</td>
-                            <td>Overcast</td>
-                            <td>Cool</td>
-                            <td>Normal</td>
-                            <td>True</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">8</td>
-                            <td>Sunny</td>
-                            <td>Mild</td>
-                            <td>High</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">No</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">9</td>
-                            <td>Sunny</td>
-                            <td>Cool</td>
-                            <td>Normal</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">10</td>
-                            <td>Rainy</td>
-                            <td>Mild</td>
-                            <td>Normal</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">11</td>
-                            <td>Sunny</td>
-                            <td>Mild</td>
-                            <td>Normal</td>
-                            <td>True</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">12</td>
-                            <td>Overcast</td>
-                            <td>Mild</td>
-                            <td>High</td>
-                            <td>True</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr>
-                            <td style="border-right: 1px solid black;">13</td>
-                            <td>Overcast</td>
-                            <td>Hot</td>
-                            <td>Normal</td>
-                            <td>False</td>
-                            <th style="border-left: 1px solid black;">Yes</th>
-                        </tr>
-                        <tr style="border-bottom: hidden;">
-                            <td style="border-right: 1px solid black;">14</td>
-                            <td>Rainy</td>
-                            <td>Mild</td>
-                            <td>High</td>
-                            <td>True</td>
-                            <th style="border-left: 1px solid black;">No</th>
-                        </tr>
-                    </tbody>
-                </table>
+    <!-- Header -->
+    <header class="py-3 mb-4 border-bottom bg-body-secondary bg-opacity-75 ">
+        <div class="container d-flex flex-wrap align-items-center justify-content-center ">
+            <a href="https://www.ubu.es" class="d-flex align-items-center me-2 ">
+                <img src="img/ubulogocolorfull.png" width="100" height="50">
+            </a>
+            <span class="fw-bold fs-5 ms-2 me-2 ">Decision Tree Simulator</span>
+            <ul class="nav me-auto mx-auto">
+                <li class="nav-item">
+                    <a href="../entropy/" class="nav-link link-dark px-2 link-opacity-50-hover ">Entropy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../conditional entropy/" class="nav-link link-dark px-2 link-opacity-50-hover ">Conditional Entropy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="../decision tree/" class="nav-link link-dark px-2 opacity-50 ">Decision Tree ID3</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <div class="container pb-2">
+        <!-- Info card -->
+        <div class="row-auto p-2">
+            <div class="accordion" id="accordionInfo">
+                <div class="card bg-light mx-auto ">
+                    <!-- General Info -->
+                    <div class="card-header fs-6" id="generalInfo">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#generalInfoDT" aria-expanded="false"
+                            aria-controls="generalInfoDT">
+                            General Information
+                        </a>
+                    </div>
+                    <div class="collapse" id="generalInfoDT" aria-labelledby="generalInfo" data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-light">
+                                Decision trees are a popular and versatile supervised machine learning algorithm
+                                used for both classification and regression tasks.
+                                They are powerful models that aim to mimic human decision-making processes.
+                            </p>
+                            <p class="card-text fw-light">
+                                A decision tree consists of a tree-like structure where:
+                            <ul class="card-text fw-light">
+                                <li>each internal node, also called decision node, represents a decision based on a
+                                    feature,</li>
+                                <li>each branch represents the outcome of the decision,</li>
+                                <li>and each leaf node represents the predicted class label.</li>
+                            </ul>
+                            </p>
+                            <p class="card-text fw-light">
+                                Decision trees are constructed using a top-down, recursive partitioning approach
+                                called "Top-Down Induction of Decision Trees (TDIDT)".
+                                The algorithm selects the best attribute/feature to split the dataset into subsets
+                                at each node based on a criterion, such as "Information Gain" or "Gini impurity"
+                                (this application uses "Information Gain").
+                                This process continues until all instances within a subset belong to the same class
+                                or have similar values and therefore represent a leaf node.
+                            </p>
+                            <a href="https://en.wikipedia.org/wiki/Decision_tree" class="btn btn-outline-dark ">Learn
+                                more</a>
+                        </div>
+                    </div>
+
+                    <!-- Algorithm -->
+                    <div class="card-header fs-6" id="algorithm">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#algorithmDT" aria-expanded="false"
+                            aria-controls="algorithmDT">
+                            ID3 Algorithm
+                        </a>
+                    </div>
+                    <div class="collapse" id="algorithmDT" aria-labelledby="algorithm" data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-bold">Input:</p>
+                            <ul class="card-text fw-light ">
+                                <li>Dataset \( S \) with attributes \( A \)</li>
+                                <li>Target attribute \( Y \)</li>
+                            </ul>
+                            <p class="card-text fw-bold">Output:</p>
+                            <ul class="card-text fw-light">
+                                <li>Decision Tree \( T \)</li>
+                            </ul>
+                            <p class="card-text fw-bold">Algorithm:</p>
+                            <ol>
+                                <li class="card-text fw-light">
+                                    Start with dataset \( S \) as the root node of the tree
+                                </li>
+                                <li class="card-text fw-light">
+                                    Check if all instances in \( S \) belong to the <span class="fw-bold">same
+                                        class</span>:
+                                    <ul>
+                                        <li>If yes, create a leaf node with the class label and return \( T \)</li>
+                                    </ul>
+                                </li>
+                                <li class="card-text fw-light">
+                                    Check if the attribute set \( A \) is <span class="fw-bold">empty</span>:
+                                    <ul>
+                                        <li>If yes, create a leaf node with the most frequent class label and
+                                            return \( T \)</li>
+                                    </ul>
+                                </li>
+                                <li class="card-text fw-light">
+                                    Calculate the information gain for each attribute in \( A \)
+                                </li>
+                                <li class="card-text fw-light">
+                                    Select the attribute \( A_{\text{best}} \) with the <span class="fw-bold">highest
+                                        information gain</span>
+                                </li>
+                                <li class="card-text fw-light">
+                                    Make this current root node into a decision node for \( A_{\text{best}} \):
+                                    <ul>
+                                        <li>Split the dataset \( S \) into subsets based on the values of attribute
+                                            \( A_{\text{best}} \).</li>
+                                    </ul>
+                                </li>
+                                <li class="card-text fw-light">
+                                    <span class="fw-bold">Recursively</span> apply the ID3 algorithm to each subset:
+                                    <ul>
+                                        <li>For each subset \( S_i \), create a child node.</li>
+                                        <li><span class="fw-bold">Input:</span> Subset \( S_i \) with attributes \(
+                                            A \setminus
+                                            \{A_{\text{best}}\} \), target attribute \( Y \).</li>
+                                        <li><span class="fw-bold">Output:</span> Subtree \( T_i \).</li>
+                                    </ul>
+                                </li>
+                                <li class="card-text fw-light">
+                                    Return the decision tree \( T \):
+                                    <ul>
+                                        <li>Decision tree \( T \) with root node \( A_{\text{best}} \) and subtree
+                                            \( T_i \) as children.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Calculation -->
+                    <div class="card-header fs-6" id="calculation">
+                        <a class="collapsed d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                            data-bs-toggle="collapse" href="#calcInfoDT" aria-expanded="false"
+                            aria-controls="calcInfoDT">
+                            Calculation
+                        </a>
+                    </div>
+                    <div class="collapse" id="calcInfoDT" aria-labelledby="calculation" data-parent="#accordionInfo">
+                        <div class="card-body ">
+                            <p class="card-text fw-light"></p>
+                            To calculate the Information Gain, the following formula is used:
+                            </p>
+                            <p class="card-text fw-light">
+                                \(I(S, A) =\)
+                                <a href="../entropy/index.html#calcInfoEntropy"
+                                    style="text-decoration: none">\(E(S)\)</a>
+                                \( - \)
+                                <a href="../conditional entropy/index.html#calcInfoCondEntropy"
+                                    style="text-decoration: none">\(E(S|A)\)</a>
+                            </p>
+                            <p class="card-text fw-light">
+                                Where:
+                            </p>
+                            <ul class="card-text fw-light">
+                                <li>\(S\) is the dataset.</li>
+                                <li>\(A\) is the attribute/set of values of that attribute.</li>
+                                <li>\(E(S)\) is the conditional entropy of the dataset given the attribute \(A\).
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Decision Tree -->
+        </div>
+        <div class="row p-2 justify-content-center">
+            <!-- Data table -->
+            <div id="dataTable" class="col-lg-8 col-sm-12 col-auto">
+                
+            </div>
+        </div>
+        <div class="row pb-2 justify-content-center">
             <div class="col-auto">
+                <span id="stepCount">Step: 1</span>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                        <button id="btnInitStep" type="button" class="btn btn-outline-secondary ">
+                            <script type="module">
+                                import initialStep from './js/stepbystep.js';
+
+                                document.querySelector('#btnInitStep').addEventListener('click', initialStep);
+                            </script>
+                            <div class="bi-chevron-bar-left">
+                        </button>
+                        <button id="btnStepback" type="button" class="btn btn-outline-secondary">
+                            <script type="module">
+                                import { stepBack } from './js/stepbystep.js';
+
+                                document.querySelector('#btnStepback').addEventListener('click', stepBack);
+                            </script>
+                            <div class="bi-chevron-compact-left"></div>
+                        </button>
+                        <button id="btnStepForward" type="button" class="btn btn-outline-secondary">
+                            <script type="module">
+                                import { stepForward } from './js/stepbystep.js';
+
+                                document.querySelector('#btnStepForward').addEventListener('click', stepForward);
+                            </script>
+                            <div class="bi-chevron-compact-right"></div>
+                        </button>
+                        <button id="btnLastStep" type="button" class="btn btn-outline-secondary">
+                            <script type="module">
+                                import { lastStep } from './js/stepbystep.js';
+
+                                document.querySelector('#btnLastStep').addEventListener('click', lastStep);
+                            </script>
+                            <div class="bi-chevron-bar-right">
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-2 justify-content-center">
+            <!-- Decision Tree -->
+            <div class="col-lg-8 col-sm-12 col-auto">
                 <div class="svg-container">
-                    <svg viewBox="0 0 500 500">
-                        <g id="g0">
-                            <a type="button" class="btn-primary" onclick="hideChildren(this)" href="#" style="text-decoration: none">
-                                <ellipse id="n0" rx="12%" ry="5%" cx="50%" cy="-6%" style="fill:white;stroke:blue;stroke-width: 2;" />
-                                <text x="41%" y="-4%" font-size="25" fill="black">Outlook</text>
-                            </a>
-                        </g>
-                        <g id="g1">
-                            <path id="e1" d="M88 108 200 -15" stroke-width="1" stroke="black" data-connected-to="n0"/>
+                    <svg id="svgDT" viewBox="0 0 500 500">
+                        <defs>
+                            <marker id="arrowMarker" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+                            </marker>
+                            <marker id="arrowMarkerReverse" markerWidth="10" markerHeight="10" refX="5" refY="5"
+                                orient="auto">
+                                <path d="M 10 0 L 0 5 L 10 10 z" fill="black" />
+                            </marker>
+                        </defs>
+                        <symbol id="node" viewBox="0 0 82 92">
+                            <rect x="1" y="1" width="80" height="26"
+                                style="fill:limegreen; stroke-width:2; stroke:black;" />
+                            <text id="nodeNr" x="12" y="20" font-size="18" fill="black" font-weight="500">Node </text>
+                            <rect x="1" y="27" width="80" height="42"
+                                style="fill:white; stroke-width:2; stroke:black;" />
+                            <text id="nodeN" x="5" y="43" font-size="16" fill="black">N = </text>
+                            <path d="M 1 48 81 48" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                            <text id="nodeE" x="5" y="64" font-size="16" fill="black">E = </text>
+                            <rect x="1" y="69" width="80" height="21"
+                                style="fill:orange; stroke-width:2; stroke:black;" />
+                            <text id="nodeAttribute" x="5" y="84" font-size="16" fill="black"></text>
+                        </symbol>
+                        <symbol id="leaf" viewBox="0 0 82 133">
+                            <rect x="1" y="1" width="80" height="26"
+                                style="fill:limegreen; stroke-width:2; stroke:black;" />
+                            <text id="leafNr" x="17" y="20" font-size="18" fill="black" font-weight="500">Leaf </text>
+                            <rect x="1" y="27" width="80" height="84"
+                                style="fill:white; stroke-width:2; stroke:black;" />
+                            <text id="leafN" x="5" y="43" font-size="16" fill="black">N = </text>
+                            <path d="M 1 48 81 48" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                            <text id="leafYes" x="5" y="64" font-size="16" fill="black">Yes = </text>
+                            <path d="M 1 69 81 69" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                            <text id="leafNo" x="5" y="85" font-size="16" fill="black">No = </text>
+                            <path d="M 1 90 81 90" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                            <text id="leafE" x="5" y="106" font-size="16" fill="black">E = </text>
+                            <rect x="1" y="111" width="80" height="21"
+                                style="fill:yellow; stroke-width:2; stroke:black;" />
+                            <text id="leafLabel" x="5" y="127" font-size="16" fill="black">Label: </text>
+                        </symbol>
+                        <symbol id="branch">
+                            <path id="branchPath" d="M100 100 100 200" stroke-width="1" stroke="black"
+                                marker-end="url(#arrowMarker)" />
                             <text>
-                                <textPath href="#e1" startOffset="25%">
-                                    <tspan font-size="16" dy="-1%">Overcast</tspan>
+                                <textPath id="branchTP" href="#branchPath" startOffset="10">
+                                    <tspan id="branchValue" font-size="16" dy="-0.5%"></tspan>
                                 </textPath>
                             </text>
-
-                            <ellipse id="n1" rx="5%" ry="4%" cx="15%" cy="25%" style="fill:white;stroke:black" />
-                            <text x="12%" y="26%" font-size="20" fill="black">Yes</text>
-                        </g>
-                        <g id="g2">
-                            <path id="e2" d="M250 -4 250 100" stroke-width="1" stroke="black" data-connected-to="n0"/>
-                            <text>
-                                <textPath href="#e2" startOffset="25%">
-                                    <tspan font-size="16" dy="-1%">Sunny</tspan>
-                                </textPath>
-                            </text>
-
-                            <a type="button" class="btn-primary" onclick="hideChildren(this)" href="#" style="text-decoration: none">
-                                <ellipse id="n2" rx="12%" ry="5%" cx="50%" cy="25%" style="fill:white;stroke:blue;stroke-width: 2;" />
-                                <text x="41%" y="26.5%" font-size="23" fill="black">Humidity</text>
-                            </a>
-                        </g>
-                        <g id="g3">
-                            <path id="e3" d="M210 250 230 149" stroke-width="1" stroke="black" data-connected-to="n2"/>
-                            <text>
-                                <textPath href="#e3" startOffset="37%">
-                                    <tspan font-size="16" dy="-1%">High</tspan>
-                                </textPath>
-                            </text>
-
-                            <ellipse id="n3" rx="5%" ry="4%" cx="41%" cy="54%" style="fill:white;stroke:black" />
-                            <text x="38.5%" y="55%" font-size="20" fill="black">No</text>
-                        </g>
-                        <g id="g4">
-                            <path id="e4" d="M270 149 290 250" stroke-width="1" stroke="black" data-connected-to="n2"/>
-                            <text>
-                                <textPath href="#e4" startOffset="30%">
-                                    <tspan font-size="16" dy="-1%">Normal</tspan>
-                                </textPath>
-                            </text>
-
-                            <ellipse id="n4" rx="5%" ry="4%" cx="59%" cy="54%" style="fill:white;stroke:black" />
-                            <text x="56%" y="55%" font-size="20" fill="black">Yes</text>
-                        </g>
-                        <g id="g5">
-                            <path id="e5" d="M297 -15 380 108" stroke-width="1" stroke="black" data-connected-to="n0"/>
-                            <text>
-                                <textPath href="#e5" startOffset="40%">
-                                    <tspan font-size="16" dy="-1%">Rainy</tspan>
-                                </textPath>
-                            </text>
-
-                            <a type="button" class="btn-primary" onclick="hideChildren(this)" href="#" style="text-decoration: none">
-                                <ellipse id="n5" rx="12%" ry="5%" cx="85%" cy="25%" style="fill:white;stroke:blue;stroke-width: 2;" />
-                                <text x="78%" y="26.5%" font-size="23" fill="black">Windy</text>
-                            </a>
-                        </g>
-                        <g id="g6">
-                            <path id="e6" d="M390 250 400 147" stroke-width="1" stroke="black" data-connected-to="n5"/>
-                            <text>
-                                <textPath href="#e6" startOffset="37%">
-                                    <tspan font-size="16" dy="-1%">True</tspan>
-                                </textPath>
-                            </text>
-
-                            <ellipse id="n6" rx="5%" ry="4%" cx="77%" cy="54%" style="fill:white;stroke:black" />
-                            <text x="74.5%" y="55%" font-size="20" fill="black">No</text>
-                        </g>
-                        <g id="g7">
-                            <path id="e7" d="M450 147 460 250" stroke-width="1" stroke="black" data-connected-to="n5"/>
-                            <text>
-                                <textPath href="#e7" startOffset="32%">
-                                    <tspan font-size="16" dy="-1%">False</tspan>
-                                </textPath>
-                            </text>
-
-                            <ellipse id="n7" rx="5%" ry="4%" cx="93%" cy="54%" style="fill:white;stroke:black" />
-                            <text x="90%" y="55%" font-size="20" fill="black">Yes</text>
-                        </g>
-
-
+                        </symbol>
                     </svg>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Footer -->
+    <footer class="py-3 mt-2 border-top bg-body-tertiary ">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <div class="col-md-4 col-auto d-flex align-items-center">
+                <ul class="flex-column">
+                    <span class="fw-bold ">Authors:</span>
+                    <li class="mb-2 mt-2" style="list-style-type: none;">
+                        <span>Daniel Drefs Fernandes</span>
+                    </li>
+                    <li class="mb-2" style="list-style-type: none;">
+                        <span>Carlos López Nozal</span>
+                    </li>
+                    <li class="mb-2" style="list-style-type: none;">
+                        <span>Ismael Ramos Pérez</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-auto d-flex align-items-center">
+                <span class="fw-light">Last edited: 12-05-2024</span>
+            </div>
+        </div>
+    </footer>
 </body>
