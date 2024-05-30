@@ -6,8 +6,8 @@
     <script src="lib/jquery-3.7.1.min.js"></script>
     <script type="module" src="../../lib/input-check.js"></script>
     <script type="module" src="../../lib/entropy-calculator.js"></script>
-    <script type="module" src="js/classNumHandler.js"></script>
     <script type="module" src="js/calculator.js"></script>
+    <script type="module" src="js/classNumHandler.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="css/styles.css" />
@@ -193,7 +193,7 @@
                                         <td>
                                             <div id="btnAddClass" class="btn btn-outline-primary" >+</div>
                                             <script type="module">
-                                                import addClass from './js/classNumHandler.js';
+                                                import { addClass } from './js/classNumHandler.js';
 
                                                 document.querySelector('#btnAddClass').addEventListener('click', addClass);
                                             </script>

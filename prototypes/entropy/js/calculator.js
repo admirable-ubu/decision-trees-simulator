@@ -1,6 +1,12 @@
 import { checkInput } from '../../../lib/input-check.js';
 import { entropy } from '../../../lib/entropy-calculator.js';
 
+const parseIntBase = 10;
+const probColumnIndex = 1;
+const binaryClasses = 2;
+
+const data = graphFunction();
+
 function E(x) {
     if (x < 0 || x > 1.00001) throw new Error("The Binary Entropy function was tried to be calculated with an invalid x value input");
 
@@ -16,7 +22,7 @@ function E(x) {
 function graphFunction() {
     var pointNum = 1;
 
-    const data = [];
+    let data = [];
     for (var x = 0; x <= pointNum + 0.001; x = x + 0.001) {
         var y = E(x);
         data.push([x, y])
@@ -27,7 +33,7 @@ function graphFunction() {
 function calcSum(inputElements) {
     var sum = 0;
     for (const element of inputElements) {
-        sum += parseInt(element.value, 10);
+        sum += parseInt(element.value, parseIntBase);
     }
 
     document.getElementById('sum-classes').textContent = sum;
@@ -47,7 +53,7 @@ function calcProbs(inputElements, sum) {
     var pValues = [];
     for (var i = 0; i < inputElements.length; i++) {
         // To not divide by 0 if all instance values are 0
-        var pValue = sum === 0 ? 0 : parseInt(inputElements[i].value, 10) / sum;
+        var pValue = sum === 0 ? 0 : parseInt(inputElements[i].value, parseIntBase) / sum;
         pValues.push(pValue);
         document.getElementById('p' + (i + 1).toString()).textContent = pValue;
     }
@@ -55,9 +61,9 @@ function calcProbs(inputElements, sum) {
     return pValues;
 }
 
-function drawPoint(data, tableEntropy) {
+function drawPoint(tableEntropy) {
     // FInd the closest data point to the x-value of p(Class 1)
-    var targetXvalue = tableEntropy.tBodies[0].rows[0].cells[1].textContent;
+    var targetXvalue = tableEntropy.tBodies[0].rows[0].cells[probColumnIndex].textContent;
     var closest = data[0][0];
     var closestPoint = data[0];
     // Assume the first number is the closest
@@ -111,9 +117,8 @@ function calcEntropy() {
     var tableEntropy = document.getElementById('table-entropy');
     var tableClasses = document.getElementById('table-classes');
     var numberClasses = tableClasses.getElementsByTagName('tbody')[0].rows.length;
-    if (numberClasses === 2) {
-        var data = graphFunction();
-        return drawPoint(data, tableEntropy);
+    if (numberClasses === binaryClasses) {
+        return drawPoint(tableEntropy);
     } else{
         return null;
     }

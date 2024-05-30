@@ -1,3 +1,5 @@
+const catColumnIndex = 0;
+
 function createRemoveButton() {
     var removeButton = document.createElement("div");
     removeButton.classList.add("btn");
@@ -21,8 +23,8 @@ function removeCategory() {
     if (tBodyRef.rows.length >= 3) {
         var removeButton = createRemoveButton();
 
-        var cell = tBodyRef.rows[tBodyRef.rows.length - 1].cells[0]
-        cell.appendChild(removeButton);
+        var catCell = tBodyRef.rows[tBodyRef.rows.length - 1].cells[catColumnIndex]
+        catCell.appendChild(removeButton);
         document.querySelector('#btnRemoveCategory').addEventListener('click', removeCategory);
     }
 }
@@ -31,7 +33,7 @@ function addCategory() {
     var table = document.getElementById('table-cond-entropy');
     var tBodyRef = table.getElementsByTagName('tbody')[0];
 
-    var catCount = +tBodyRef.rows[tBodyRef.rows.length - 1].cells[0].id[1] + 1;
+    var catCount = +tBodyRef.rows[tBodyRef.rows.length - 1].cells[catColumnIndex].id[1] + 1;
     var newRow = tBodyRef.insertRow();
     var catCell = newRow.insertCell();
     var class1Cell = newRow.insertCell();
@@ -48,6 +50,7 @@ function addCategory() {
 
     var removeButton = createRemoveButton();
     catCell.appendChild(removeButton);
+    catCell.classList.add("text-center");
 
     // Class 1 cell
     var class1Input = document.createElement("input");
@@ -80,7 +83,7 @@ function addCategory() {
     // remove "Category remove button" of previous input group so that there is only one
     if (tBodyRef.rows.length >= 4) {
         document.querySelector('#btnRemoveCategory').removeEventListener('click', removeCategory);
-        var cell = tBodyRef.rows[tBodyRef.rows.length - 2].cells[0]
+        var cell = tBodyRef.rows[tBodyRef.rows.length - 2].cells[catColumnIndex]
         var button = cell.getElementsByTagName("div")[0];
         cell.removeChild(button);
     }

@@ -125,11 +125,11 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row ">
             <p class="fs-2 text-center">Conditional Entropy calculator</p>
             <!-- Alert sum 0 -->
             <div class="row-auto">
-                <div class="col-auto">
+                <div class="col-auto text-center">
                     <div class="alert alert-danger alert-dismissible d-none" id="alert-sum-0">
                         <button type="button" class="btn-close"
                             onclick="$('#alert-sum-0').addClass('d-none');"></button>
@@ -139,7 +139,7 @@
             </div>
             <!-- Alert invalid value -->
             <div class="row-auto">
-                <div class="col-auto">
+                <div class="col-auto text-center">
                     <div class="alert alert-danger alert-dismissible d-none" id="alert-invalid-val">
                         <button type="button" class="btn-close"
                             onclick="$('#alert-invalid-val').addClass('d-none');"></button>
@@ -149,7 +149,7 @@
             </div>
             <!-- Alert no input -->
             <div class="row-auto">
-                <div class="col-auto">
+                <div class="col-auto text-center">
                     <div class="alert alert-danger alert-dismissible d-none" id="alert-empty-input">
                         <button type="button" class="btn-close"
                             onclick="$('#alert-empty-input').addClass('d-none');"></button>
@@ -159,7 +159,7 @@
             </div>
             <!-- Conditional Entropy table -->
             <div class="row-auto">
-                <div class="col-auto">
+                <div class="col-auto d-flex justify-content-center ">
                     <div class="table-wrapper">
                         <table class="table caption-top" id="table-cond-entropy">
                             <caption>Feature: </caption>
@@ -170,21 +170,21 @@
                                     <th>Class 2</th>
                                     <th>Ratio</th>
                                     <th>E(Category)</th>
-                                    <th>CE(Feature)</th>
+                                    <th class="text-center ">CE(Feature)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td id="c1"><label class="form-control-plaintext ">Category 1:</label></td>
+                                    <td id="c1" class="text-center "><label class="form-control-plaintext ">Category 1:</label></td>
                                     <td><input value=1 type=text class="form-control" /></td>
                                     <td><input value=5 type=text class="form-control" /></td>
                                     <td><label class="form-control-plaintext ">0.4</label></td>
                                     <td><label class="form-control-plaintext ">0.65</label></td>
                                     <td id="ceCell" rowspan="3" style="vertical-align: middle;"><label id="ce"
-                                            class="form-control-plaintext ">0.56</label></td>
+                                            class="form-control-plaintext text-center fw-semibold  ">0.56</label></td>
                                 </tr>
                                 <tr>
-                                    <td id="c2"><label class="form-control-plaintext ">Category 2:</label></td>
+                                    <td id="c2" class="text-center "><label class="form-control-plaintext ">Category 2:</label></td>
                                     <td><input value=1 type=text class="form-control" /></td>
                                     <td><input value=8 type=text class="form-control" /></td>
                                     <td><label class="form-control-plaintext ">0.6</label></td>
@@ -193,10 +193,10 @@
                             </tbody>
                             <tfoot>
                                 <tr style="border-bottom: hidden;">
-                                    <td>
+                                    <td class="text-center ">
                                         <div id="btnAddCategory" class="btn btn-outline-primary ">+</div>
                                         <script type="module">
-                                            import addCategory from './js/catNumHandler.js';
+                                            import { addCategory } from './js/catNumHandler.js';
 
                                             document.querySelector('#btnAddCategory').addEventListener('click', addCategory);
                                         </script>
@@ -206,20 +206,24 @@
                                     <td></td>
                                     <td></td>
                                     <td>
-                                        <div id="btnCalculateCondEntropy" class="btn btn-primary " >Calculate Conditional
-                                            Entropy
-                                        </div>
-                                        <script type="module">
-                                            import { calcCondEntropy } from './js/calculator.js';
-
-                                            document.querySelector('#btnCalculateCondEntropy').addEventListener('click', calcCondEntropy);
-                                        </script>
                                     </td>
-
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
+                </div>
+            </div>
+            <!-- "Calculate Conditional Entropy" button -->
+            <div class="row-auto pt-2 pb-3 ">
+                <div class="col-auto text-center ">
+                    <div id="btnCalculateCondEntropy" class="btn btn-primary ">Calculate Conditional
+                        Entropy
+                    </div>
+                    <script type="module">
+                        import { calcCondEntropy } from './js/calculator.js';
+    
+                        document.querySelector('#btnCalculateCondEntropy').addEventListener('click', calcCondEntropy);
+                    </script>
                 </div>
             </div>
         </div>

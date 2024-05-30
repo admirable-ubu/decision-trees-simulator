@@ -1,3 +1,8 @@
+const binaryClasses = 2;
+const classColumnIndex = 0;
+const instancesColumnIndex = 1;
+const probColumnIndex = 1;
+
 function createRemoveButton() {
     var removeButton = document.createElement("div");
     removeButton.classList.add("btn");
@@ -15,15 +20,15 @@ function addClass() {
 
     // Display info alert for calculating the Entropy with more than 2 classes
     // (change it here so that it's only called when the rows length goes from 2 to 3)
-    if (tBodyRefClasses.rows.length === 2) {
+    if (tBodyRefClasses.rows.length === binaryClasses) {
         $('#alert-3-plus-classes').removeClass('d-none');
     }
 
     // Classes table
     // add border under class cell of the current last row
-    tBodyRefClasses.rows[tBodyRefClasses.rows.length - 1].cells[0].setAttribute("style", "border-bottom: visible");
+    tBodyRefClasses.rows[tBodyRefClasses.rows.length - 1].cells[classColumnIndex].setAttribute("style", "border-bottom: visible");
 
-    var cCount = +tBodyRefClasses.rows[tBodyRefClasses.rows.length - 1].cells[1].id[1] + 1;
+    var cCount = +tBodyRefClasses.rows[tBodyRefClasses.rows.length - 1].cells[instancesColumnIndex].id[1] + 1;
     var newRow = tBodyRefClasses.insertRow();
     var cCell = newRow.insertCell();
     var cValueCell = newRow.insertCell();
@@ -54,7 +59,7 @@ function addClass() {
     // remove "Class remove button" of previous input group so that there is only one
     if (tBodyRefClasses.rows.length >= 4) {
         document.querySelector('#btnRemoveClass').removeEventListener('click', removeClass);
-        var cell = tBodyRefClasses.rows[tBodyRefClasses.rows.length - 2].cells[1]
+        var cell = tBodyRefClasses.rows[tBodyRefClasses.rows.length - 2].cells[instancesColumnIndex]
         var inputG = cell.getElementsByTagName("div")[0];
         var input = inputG.getElementsByTagName("input")[0];
         var button = inputG.getElementsByTagName("div")[0];
@@ -66,7 +71,7 @@ function addClass() {
     document.querySelector('#btnRemoveClass').addEventListener('click', removeClass);
 
     // Entropy table
-    var pCount = +tBodyRefEntropy.rows[tBodyRefEntropy.rows.length - 1].cells[1].id[1] + 1;
+    var pCount = +tBodyRefEntropy.rows[tBodyRefEntropy.rows.length - 1].cells[probColumnIndex].id[1] + 1;
     var newRowE = tBodyRefEntropy.insertRow();
     var pCell = newRowE.insertCell();
     var valueCell = newRowE.insertCell();
@@ -85,7 +90,7 @@ function removeClass() {
     var tBodyRefClasses = tableClasses.tBodies[0]
     var numClassesBefore = tBodyRefClasses.rows.length;
 
-    if (numClassesBefore === 2) throw new Error("No classes can be removed if there are only 2 left");
+    if (numClassesBefore === binaryClasses) throw new Error("No classes can be removed if there are only 2 left");
 
     document.querySelector('#btnRemoveClass').removeEventListener('click', removeClass);
     tableClasses.deleteRow(numClassesBefore);
@@ -94,11 +99,11 @@ function removeClass() {
     var numClassesAfter = tBodyRefClasses.rows.length;
 
     // add "Class remove button" to the now last row
-    if (numClassesAfter >= 3) {
+    if (numClassesAfter >= (binaryClasses + 1)) {
         var inputGroup = document.createElement("div");
         inputGroup.classList.add("input-group");
 
-        var cell = tBodyRefClasses.rows[numClassesAfter - 1].cells[1]
+        var cell = tBodyRefClasses.rows[numClassesAfter - 1].cells[instancesColumnIndex]
         var input = cell.getElementsByTagName("input")[0];
         cell.removeChild(input);
         inputGroup.appendChild(input);
@@ -113,7 +118,7 @@ function removeClass() {
 
     // Display info alert for calculating the Entropy with more than 2 classes
     // (change it here so that it's only called when the rows length goes from 2 to 3)
-    if (numClassesAfter === 2) {
+    if (numClassesAfter === binaryClasses) {
         $('#alert-3-plus-classes').addClass('d-none');
     }
 }

@@ -1,16 +1,19 @@
 import { checkInput } from '../../../lib/input-check.js';
 import { entropy } from '../../../lib/entropy-calculator.js';
 
+const parseIntBase = 10;
+const ratioColumnIndex = 3;
+
 function calcRatio(tBodyRef, instanceVals) {
     var sum = 0;
     var rowSums = [];
     for (var i = 0; i < instanceVals.length; i++) {
-        var currentVal = parseInt(instanceVals[i].value, 10);
+        var currentVal = parseInt(instanceVals[i].value, parseIntBase);
         sum += currentVal;
 
         // Calculate the sum of the row's instance values
         if (i % 2) {
-            rowSums.push(parseInt(instanceVals[i - 1].value, 10) + currentVal);
+            rowSums.push(parseInt(instanceVals[i - 1].value, parseIntBase) + currentVal);
         }
     }
 
@@ -28,7 +31,7 @@ function calcRatio(tBodyRef, instanceVals) {
         // To not divide by 0 if all instance values are 0
         var ratio = sum === 0 ? 0 : rowSums[i] / sum;
         ratioVals.push(ratio);
-        var ratioCell = tBodyRef.rows[i].getElementsByTagName('td')[3];
+        var ratioCell = tBodyRef.rows[i].getElementsByTagName('td')[ratioColumnIndex];
         var ratioLabel = ratioCell.getElementsByTagName('label')[0];
         ratioLabel.textContent = ratio;
     }
@@ -41,7 +44,7 @@ function calcEntropyCat(rowSums, tBodyRef, instanceVals) {
     var rowValues = [];
     for (var i = 0; i < instanceVals.length; i++) {
         if (i % 2) {
-            var rowValue = [parseInt(instanceVals[i - 1].value, 10), parseInt(instanceVals[i].value, 10)];
+            var rowValue = [parseInt(instanceVals[i - 1].value, parseIntBase), parseInt(instanceVals[i].value, parseIntBase)];
             rowValues.push(rowValue);
         }
     }
