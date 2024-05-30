@@ -1,7 +1,14 @@
 // Get example data
-import { data } from '../exampledata/example1.js';
-import { label } from '../exampledata/example1.js';
-const attributes = Object.keys(data[0].attributes);
+import { data1, attributes1, label1 } from '../exampledata/example1.js';
+
+var data;
+var attributes;
+var label;
+
+// To retrieve locally stored user data
+const userA = 'userAttributes';
+const userL = 'userLabel';
+const userD = 'userData';
 
 function createCountCell(){
     var countCell = document.createElement('td');
@@ -33,13 +40,30 @@ function createBodyRows(count){
     return bodyRow;
 }
 
-function createTable(){
+function createTable(userData = false){
+    if(userData){
+        let userCsvData = JSON.parse(localStorage.getItem('csvData'));
+        data = userCsvData[userD];
+        attributes = userCsvData[userA];
+        label = userCsvData[userL];
+    } else {
+        data = data1;
+        attributes = attributes1;
+        label = label1;
+    }
+
     var tableDiv = document.getElementById('dataTable');
+
+    // Remove table of a previous step
+    if (tableDiv.getElementsByTagName('table')[0] != null) {
+        tableDiv.removeChild(tableDiv.getElementsByTagName('table')[0]);
+    }
 
     // Table element
     var tableEl = document.createElement('table');
     tableEl.classList.add('table');
     tableEl.classList.add('caption-top');
+    tableEl.setAttribute("id", "dataTableEl");
     
     // Caption
     var caption = document.createElement('caption');
@@ -81,4 +105,9 @@ function createTable(){
     tableDiv.appendChild(tableEl);
 }
 
-document.addEventListener('DOMContentLoaded', createTable);
+document.addEventListener('DOMContentLoaded', function () {
+    createTable(false);
+});
+
+export { createTable };
+export default createTable;
