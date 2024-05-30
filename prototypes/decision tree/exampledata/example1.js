@@ -28,3 +28,5 @@ export const label1 = label;
 export var labelValues1 = labelValues;
 export const data1 = data;
 
+export default data1;
+
