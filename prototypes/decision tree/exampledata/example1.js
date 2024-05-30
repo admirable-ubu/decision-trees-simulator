@@ -22,11 +22,12 @@ const data = [
     { attributes: { [attributes[0]]: attributeValues[0][2], [attributes[1]]: attributeValues[1][1], [attributes[2]]: attributeValues[2][0], [attributes[3]]: attributeValues[3][1] }, label: labelValues[1] }
 ];
 
-export var attributes1 = attributes;
-export var attributeValues1 = attributeValues;
-export const label1 = label;
-export var labelValues1 = labelValues;
-export const data1 = data;
+var attributes1 = attributes;
+var attributeValues1 = attributeValues;
+const label1 = label;
+var labelValues1 = labelValues;
+const data1 = data;
 
-export default data1;
+export { attributes1, attributeValues1, label1, labelValues1, data1 }
+export default label1;
 
