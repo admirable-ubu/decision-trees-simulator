@@ -33,7 +33,7 @@ function calcRatio(tBodyRef, instanceVals) {
         ratioVals.push(ratio);
         var ratioCell = tBodyRef.rows[i].getElementsByTagName('td')[ratioColumnIndex];
         var ratioLabel = ratioCell.getElementsByTagName('label')[0];
-        ratioLabel.textContent = ratio;
+        ratioLabel.textContent = ratio.toFixed(2);
     }
 
     return [rowSums, ratioVals];
@@ -61,7 +61,7 @@ function calcEntropyCat(rowSums, tBodyRef, instanceVals) {
 
         var entropyCell = tBodyRef.getElementsByTagName('tr')[i].getElementsByTagName('td')[4];
         var entropyLabel = entropyCell.getElementsByTagName('label')[0];
-        entropyLabel.textContent = e;
+        entropyLabel.textContent = e.toFixed(2);
         entropies.push(e);
     }
     return entropies;
@@ -92,7 +92,8 @@ function calcCondEntropy() {
     for (var i = 0; i < entropies.length; i++) {
         condEntropy += ratioVals[i] * entropies[i];
     }
-    document.getElementById('ce').textContent = condEntropy;
+    document.getElementById('ce').textContent = condEntropy.toFixed(2);
 }
 
 export { calcRatio, calcEntropyCat, calcCondEntropy };
+export default calcCondEntropy;

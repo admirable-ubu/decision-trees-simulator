@@ -69,13 +69,13 @@ function addCategory() {
     // Ratio cell
     var ratioLabel = document.createElement("label");
     ratioLabel.classList.add("form-control-plaintext");
-    ratioLabel.innerHTML = "0";
+    ratioLabel.textContent = "0.00";
     ratioCell.appendChild(ratioLabel);
 
     // Entropy cell
     var entropyLabel = document.createElement("label");
     entropyLabel.classList.add("form-control-plaintext");
-    entropyLabel.innerHTML = "0";
+    entropyLabel.textContent = "0.00";
     entropyCell.appendChild(entropyLabel);
 
     document.getElementById('ceCell').setAttribute("rowspan", catCount.toString());
