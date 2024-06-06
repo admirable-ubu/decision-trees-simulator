@@ -55,7 +55,7 @@ function calcProbs(inputElements, sum) {
         // To not divide by 0 if all instance values are 0
         var pValue = sum === 0 ? 0 : parseInt(inputElements[i].value, parseIntBase) / sum;
         pValues.push(pValue);
-        document.getElementById('p' + (i + 1).toString()).textContent = pValue;
+        document.getElementById('p' + (i + 1).toString()).textContent = pValue.toFixed(2);
     }
 
     return pValues;
@@ -112,7 +112,7 @@ function calcEntropy() {
     var e = entropy(pValues);
 
     var output = document.getElementById('sum-entropy');
-    output.textContent = e;
+    output.textContent = e.toFixed(2);
 
     var tableEntropy = document.getElementById('table-entropy');
     var tableClasses = document.getElementById('table-classes');
@@ -125,3 +125,4 @@ function calcEntropy() {
 }
 
 export { E, graphFunction, calcSum, calcProbs, entropy, calcEntropy, checkInput };
+export default E;

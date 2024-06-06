@@ -96,9 +96,9 @@
                                 Where:
                             </p>
                             <ul class="card-text fw-light">
-                                <li>\(X\) is the dataset.</li>
-                                <li>\(n\) is the number of classes.</li>
-                                <li>\(p_i\) is the proportion of instances belonging to class \(i\).</li>
+                                <li>\(X\) is the dataset</li>
+                                <li>\(n\) is the number of classes</li>
+                                <li>\(p_i\) is the proportion of instances belonging to class \(i\)</li>
                             </ul>
                         </div>
                     </div>
@@ -108,8 +108,8 @@
         <div class="row">
 
             <!-- Entropy function graph -->
-            <div class="col-xl-5 col-lg-6">
-                <p class="fs-2 text-center">Binary entropy function</p>
+            <div class="col-xl-5 col-lg-6 text-center">
+                <p class="fs-2">Binary entropy function</p>
                 <!-- Info alert if more than 2 classes -->
                 <div class="row-auto">
                     <div class="col-auto">
@@ -167,7 +167,7 @@
                     <div class="col-xl-7 col-lg-8 col-md-6">
                         <div class="table-wrapper">
                             <table class="table caption-top table-hover" id="table-classes">
-                                <caption>Feature: </caption>
+                                <caption>Example feature</caption>
                                 <thead class="sticky-top">
                                     <tr>
                                         <th>Classes</th>
@@ -191,7 +191,7 @@
                                 <tfoot style="border-bottom: hidden;">
                                     <tr>
                                         <td>
-                                            <div id="btnAddClass" class="btn btn-outline-primary" >+</div>
+                                            <div id="btnAddClass" class="btn btn-outline-primary">+</div>
                                             <script type="module">
                                                 import { addClass } from './js/classNumHandler.js';
 
@@ -205,7 +205,9 @@
                                 </tfoot>
                             </table>
                         </div>
-                        <div id="btnCalculateEntropy" class="btn btn-primary ">Calculate Entropy
+                        <div class="row-auto mt-2">
+                            <div id="btnCalculateEntropy" class="btn btn-primary ">Calculate Entropy
+                            </div>
                         </div>
                     </div>
 
@@ -216,18 +218,18 @@
                                 <tbody>
                                     <tr>
                                         <td>p(Class 1):</td>
-                                        <td id="p1">0.5</td>
+                                        <td id="p1">0.50</td>
                                     </tr>
                                     <tr>
                                         <td>p(Class 2):</td>
-                                        <td id="p2">0.5</td>
+                                        <td id="p2">0.50</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="table-group-divider" style="border-bottom: hidden;">
                                     <tr>
                                         <td>E(Feature):</td>
                                         <td>
-                                            <div id="sum-entropy">1</div>
+                                            <div id="sum-entropy">1.00</div>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -256,16 +258,40 @@
                 </ul>
             </div>
             <div class="col-md-3 col-auto d-flex align-items-center">
-                <span class="fw-light">Last edited: 12-05-2024</span>
+                <span class="date fw-light"></span>
+                <script>
+                    // Get the date of when the repository was last updated and write it into the corresponding footer span
+                    const desiredRepo = "TFG-decision-trees-sim";
+                    const dateTagClass = ".date";
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            let repos = JSON.parse(this.responseText);
+
+                            repos.forEach((repo) => {
+                                if (repo.name == desiredRepo) {
+                                    let lastUpdated = new Date(repo.updated_at);
+                                    let day = lastUpdated.getUTCDate();
+                                    let month = lastUpdated.getUTCMonth() + 1;
+                                    let year = lastUpdated.getUTCFullYear();
+                                    $(dateTagClass).text(`Last updated: ${day}-${month}-${year}`);
+                                }
+                            });
+                        }
+                    };
+                    xhttp.open("GET", "https://api.github.com/users/danieldf01/repos", true);
+                    xhttp.send();
+                </script>
             </div>
         </div>
     </footer>
     <script type="module">
-        import {graphFunction, calcEntropy} from './js/calculator.js';
+        import { graphFunction, calcEntropy } from './js/calculator.js';
 
         // Function graph creation with D3.js
         const margin = { top: 10, right: 50, bottom: 50, left: 50 },
-            width = 450 - margin.left - margin.right,
+            width = 400 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
         const svg = d3.select("#root").attr("width", width + margin.left + margin.right)
@@ -338,7 +364,7 @@
                 .attr("cx", xScale(points[0][0]))
                 .attr("cy", yScale(0));
         }
-        
+
         function drawNewLine(points) {
             // Draw line between point and entropy graph
             svg.append("path")

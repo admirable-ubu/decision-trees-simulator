@@ -80,7 +80,7 @@ function addClass() {
     pCell.textContent = "p(Class " + +pCount + "):";
 
     // Value cell
-    valueCell.textContent = 0;
+    valueCell.textContent = '0.00';
     valueCell.id = "p" + pCount;
 }
 
