@@ -5,10 +5,11 @@
     <link rel="stylesheet" href="css/styles.css" />
     <script type="module" src="../../lib/entropy-calculator.js" defer></script>
     <script type="module" src="../../lib/input-check.js" defer></script>
-    <script type="module" src="js/table.js" defer></script>
+    <script type="module" src="js/dataTable.js" defer></script>
     <script type="module" src="js/stepbystep.js" defer></script>
     <script type="module" src="js/tree.js" defer></script>
     <script type="module" src="js/valueTable.js" defer></script>
+    <script type="module" src="js/csvHandler.js" defer></script>
     <script type="module" src="js/modalHandler.js" defer></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -20,6 +21,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="lib/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -49,6 +51,7 @@
             </ul>
         </div>
     </header>
+    <!-- Info cards, dataset options -->
     <div class="container pb-2">
         <!-- Info card -->
         <div class="row-auto p-2">
@@ -72,16 +75,16 @@
                             <p class="card-text fw-light">
                                 A decision tree consists of a tree-like structure where:
                             <ul class="card-text fw-light">
-                                <li>each internal node, also called decision node, represents a decision based on a
-                                    feature,</li>
-                                <li>each branch represents the outcome of the decision,</li>
-                                <li>and each leaf node represents the predicted class label.</li>
+                                <li>internal nodes, also called decision nodes, represent a decision based on a
+                                    feature</li>
+                                <li>branches represent the outcome of the decision</li>
+                                <li>leaf nodes represent the predicted class label</li>
                             </ul>
                             </p>
                             <p class="card-text fw-light">
                                 Decision trees are constructed using a top-down, recursive partitioning approach
                                 called "Top-Down Induction of Decision Trees (TDIDT)".
-                                The algorithm selects the best attribute/feature to split the dataset into subsets
+                                The algorithm selects the best feature to split the dataset into subsets
                                 at each node based on a criterion, such as "Information Gain" or "Gini impurity"
                                 (this application uses "Information Gain").
                                 This process continues until all instances within a subset belong to the same class
@@ -104,8 +107,8 @@
                         <div class="card-body ">
                             <p class="card-text fw-bold">Input:</p>
                             <ul class="card-text fw-light ">
-                                <li>Dataset \( S \) with attributes \( A \)</li>
-                                <li>Target attribute \( Y \)</li>
+                                <li>Dataset \( S \) with features \( F \)</li>
+                                <li>Target feature \( Y \)</li>
                             </ul>
                             <p class="card-text fw-bold">Output:</p>
                             <ul class="card-text fw-light">
@@ -124,41 +127,41 @@
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
-                                    Check if the attribute set \( A \) is <span class="fw-bold">empty</span>:
+                                    Check if the feature set \( F \) is <span class="fw-bold">empty</span>:
                                     <ul>
                                         <li>If yes, create a leaf node with the most frequent class label and
                                             return \( T \)</li>
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
-                                    Calculate the information gain for each attribute in \( A \)
+                                    Calculate the information gain for each feature in \( F \)
                                 </li>
                                 <li class="card-text fw-light">
-                                    Select the attribute \( A_{\text{best}} \) with the <span class="fw-bold">highest
+                                    Select the feature \( F_{\text{best}} \) with the <span class="fw-bold">highest
                                         information gain</span>
                                 </li>
                                 <li class="card-text fw-light">
-                                    Make this current root node into a decision node for \( A_{\text{best}} \):
+                                    Make this current root node into a decision node for \( F_{\text{best}} \):
                                     <ul>
-                                        <li>Split the dataset \( S \) into subsets based on the values of attribute
-                                            \( A_{\text{best}} \).</li>
+                                        <li>Split the dataset \( S \) into subsets based on the values of feature
+                                            \( F_{\text{best}} \)</li>
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
                                     <span class="fw-bold">Recursively</span> apply the ID3 algorithm to each subset:
                                     <ul>
-                                        <li>For each subset \( S_i \), create a child node.</li>
-                                        <li><span class="fw-bold">Input:</span> Subset \( S_i \) with attributes \(
-                                            A \setminus
-                                            \{A_{\text{best}}\} \), target attribute \( Y \).</li>
-                                        <li><span class="fw-bold">Output:</span> Subtree \( T_i \).</li>
+                                        <li>For each subset \( S_i \), create a child node</li>
+                                        <li><span class="fw-bold">Input:</span> Subset \( S_i \) with feature \(
+                                            F \setminus
+                                            \{F_{\text{best}}\} \), target feature \( Y \)</li>
+                                        <li><span class="fw-bold">Output:</span> Subtree \( T_i \)</li>
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
                                     Return the decision tree \( T \):
                                     <ul>
-                                        <li>Decision tree \( T \) with root node \( A_{\text{best}} \) and subtree
-                                            \( T_i \) as children.</li>
+                                        <li>Decision tree \( T \) with root node \( F_{\text{best}} \) and subtree
+                                            \( T_i \) as children</li>
                                     </ul>
                                 </li>
                             </ol>
@@ -175,63 +178,146 @@
                     </div>
                     <div class="collapse" id="calcInfoDT" aria-labelledby="calculation" data-parent="#accordionInfo">
                         <div class="card-body ">
-                            <p class="card-text fw-light"></p>
-                            To calculate the Information Gain, the following formula is used:
+                            <p class="card-text fw-light">
+                                To calculate the Information Gain, the following formula is used:
                             </p>
                             <p class="card-text fw-light">
-                                \(I(S, A) =\)
+                                \(I(S, F) =\)
                                 <a href="../entropy/index.html#calcInfoEntropy"
                                     style="text-decoration: none">\(E(S)\)</a>
                                 \( - \)
                                 <a href="../conditional entropy/index.html#calcInfoCondEntropy"
-                                    style="text-decoration: none">\(E(S|A)\)</a>
+                                    style="text-decoration: none">\(E(S|F)\)</a>
                             </p>
                             <p class="card-text fw-light">
                                 Where:
                             </p>
                             <ul class="card-text fw-light">
-                                <li>\(S\) is the dataset.</li>
-                                <li>\(A\) is the attribute/set of values of that attribute.</li>
-                                <li>\(E(S)\) is the conditional entropy of the dataset given the attribute \(A\).
-                                </li>
+                                <li>\(S\) is the dataset</li>
+                                <li>\(F\) is the feature/set of values of that feature</li>
+                                <li>\(E(S)\) is the entropy of the dataset \(S\)</li>
+                                <li>\(E(S|F)\) is the conditional entropy of the dataset given the feature \(F\)</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Modal for .csv example data upload -->
-        <div class="row-auto p-2 text-center">
+        <!-- Example dataset select form, modal for .csv dataset upload -->
+        <div class="row p-2 justify-content-center">
+            <!-- Example dataset select -->
+            <div class="col-auto">
+                <select id="selectExData" class="form-select border-primary-subtle" data-live-search="true">
+                    <option id="selectPlaceholder" selected disabled>Choose example dataset</option>
+                    <option>Play Golf 1</option>
+                    <option>Play Golf 2</option>
+                    <option>Iris</option>
+                    <option>Mushrooms</option>
+                    <option>Lenses</option>
+                </select>
+                <script type="module">
+                    import { loadExampleData } from "./js/csvHandler.js";
+
+                    var selectEl = document.getElementById("selectExData");
+                    selectEl.addEventListener("change", function (e) {
+                        var selectedExample = $(this).val();
+                        loadExampleData(selectedExample);
+                    });
+                </script>
+            </div>
+            <!-- User csv modal -->
             <div class="col-auto ">
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                <button type="button" class="btn border-success-subtle" data-bs-toggle="modal"
                     data-bs-target="#uploadModal">
-                    Load own .csv Example Data
+                    Load own CSV dataset
                 </button>
                 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="uploadModalLabel">Upload .csv Example Data</h5>
+                                <div class="modal-title fw-semibold fs-5" id="uploadModalLabel">Upload CSV Example Data
+                                </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <form id="uploadForm">
                                     <div class="mb-3">
-                                        <label for="csvFile" class="form-label">Choose .csv file</label>
+                                        <!-- File requirements -->
+                                        <div class="card bg-light mb-3">
+                                            <div class="card-header bg-danger-subtle" id="fileReqHeader"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseFileReq"
+                                                aria-expanded="true" aria-controls="collapseFileReq">
+                                                <a class="collapsed text-center fw-bold fs-5 d-block link-body-emphasis link-offset-2 link-offset-2-hover link-underline link-underline-opacity-0 link-underline-opacity-50-hover"
+                                                    data-bs-toggle="collapse" href="#collapseFileReq"
+                                                    aria-expanded="false" aria-controls="collapseFileReq">
+                                                    FILE REQUIREMENTS
+                                                </a>
+                                            </div>
+
+                                            <div id="collapseFileReq" class="collapse" aria-labelledby="fileReqHeader"
+                                                data-bs-parent="#fileReqHeader">
+                                                <div class="card-body ">
+                                                    <ol>
+                                                        <li><strong>Format:</strong> The file needs to be in CSV
+                                                            (Comma-Separated
+                                                            Values) format and must not contain "" (single quotation
+                                                            marks '' are allowed)</li>
+                                                        <li><strong>Categorical values:</strong> All features must only
+                                                            have
+                                                            categorical values (if you want to use numbers as
+                                                            categorical values, make sure to put them in single
+                                                            quotation marks, e.g., '5')</li>
+                                                        <li><strong>Class Column:</strong> The class column, indicating
+                                                            the target
+                                                            feature, must be the last column in your dataset</li>
+                                                        <li><strong>Maximum classes:</strong> The target class can only
+                                                            have 2
+                                                            distinct values</li>
+                                                        <li><strong>Maximum Rows:</strong> Your file must not contain
+                                                            more than 150
+                                                            rows of data (not counting feature row)</li>
+                                                        <li><strong>Maximum Columns:</strong> Your file must not contain
+                                                            more than 25
+                                                            columns</li>
+                                                        <li><strong>Completeness:</strong> The number of values in each
+                                                            row must be the same number as the amount of features as
+                                                            specified in the
+                                                            first row</li>
+                                                    </ol>
+
+                                                    <div class="div text-center mb-2">
+                                                        <span class="fw-bold">Example:</span>
+                                                    </div>
+                                                    <div class="text-center mb-2">
+                                                        <img src="img/csvExample.png" width="280" height="200">
+                                                    </div>
+                                                    <div class="div text-center">
+                                                        <span>Failure to meet these requirements may result in errors or
+                                                            incorrect
+                                                            analysis.</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Choose csv file -->
+                                        <div class="text-center">
+                                            <label for="csvFile" class="form-label ">Choose CSV file</label>
+                                        </div>
                                         <input class="form-control" type="file" id="csvFile" accept=".csv">
                                     </div>
                                 </form>
                             </div>
-                            <div class="modal-footer">
+                            <!-- Close, upload buttons -->
+                            <div class="modal-footer ">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="button" class="btn btn-primary" id="btnUploadModal">
                                     Upload
                                     <script type="module">
-                                        import { csvHandler } from './js/modalHandler.js';
+                                        import { handleUserCsv } from './js/modalHandler.js';
 
-                                        document.querySelector('#btnUploadModal').addEventListener('click', csvHandler);
+                                        document.querySelector('#btnUploadModal').addEventListener('click', handleUserCsv);
                                     </script>
                                 </button>
                             </div>
@@ -240,118 +326,167 @@
                 </div>
             </div>
         </div>
-        <div class="row p-2 justify-content-center">
-            <!-- Data table -->
-            <div id="dataTable" class="col-lg-6 col-sm-12 col-auto">
-
-            </div>
-            <!-- Value table -->
-            <div id="valueTable" class="col-lg-6 col-auto">
-
-            </div>
-        </div>
-        <!-- Step counter -->
-        <div class="row pb-2 justify-content-center">
+    </div>
+    <!-- Dataset info card, tables, SVG tree -->
+    <div id="contentContainer" class="container pb-2" style="display: none;">
+        <!-- Dataset info card -->
+        <div class="row m-2 justify-content-center">
             <div class="col-auto">
-                <span id="stepCount">Step: 1</span>
-            </div>
-        </div>
-        <!-- Step-by-step control bar -->
-        <div class="row justify-content-center">
-            <div class="col-auto">
-                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="btn-group me-2" role="group" aria-label="First group">
-                        <button id="btnInitStep" type="button" class="btn btn-outline-secondary ">
-                            <script type="module">
-                                import { initialStep } from './js/stepbystep.js';
-
-                                document.querySelector('#btnInitStep').addEventListener('click', initialStep);
-                            </script>
-                            <div class="bi-chevron-bar-left"></div>
-                        </button>
-                        <button id="btnStepback" type="button" class="btn btn-outline-secondary">
-                            <script type="module">
-                                import { stepBack } from './js/stepbystep.js';
-
-                                document.querySelector('#btnStepback').addEventListener('click', stepBack);
-                            </script>
-                            <div class="bi-chevron-compact-left"></div>
-                        </button>
-                        <button id="btnStepForward" type="button" class="btn btn-outline-secondary">
-                            <script type="module">
-                                import { stepForward } from './js/stepbystep.js';
-
-                                document.querySelector('#btnStepForward').addEventListener('click', stepForward);
-                            </script>
-                            <div class="bi-chevron-compact-right"></div>
-                        </button>
-                        <button id="btnLastStep" type="button" class="btn btn-outline-secondary">
-                            <script type="module">
-                                import { lastStep } from './js/stepbystep.js';
-
-                                document.querySelector('#btnLastStep').addEventListener('click', lastStep);
-                            </script>
-                            <div class="bi-chevron-bar-right">
-                        </button>
-
+                <div id="datasetCard" class="card">
+                    <div class="card-header text-center">
+                        <span>Currently used dataset:</span>
+                        <span id="currentDatasetSpan" class="fw-bold"></span>
+                    </div>
+                    <div id="datasetCardBody" class="card-body text-center">
+                        <p id="datasetCardText" class="card-text fw-light"></p>
+                        <a id="datasetCardLink" href="#" class="btn btn-outline-secondary">Learn more</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row p-2 justify-content-center">
-            <!-- Decision Tree -->
-            <div class="col-lg-8 col-sm-12 col-auto">
-                <div class="svg-container">
-                    <svg id="svgDT" viewBox="0 0 500 500">
-                        <defs>
-                            <marker id="arrowMarker" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
-                            </marker>
-                            <marker id="arrowMarkerReverse" markerWidth="10" markerHeight="10" refX="5" refY="5"
-                                orient="auto">
-                                <path d="M 10 0 L 0 5 L 10 10 z" fill="black" />
-                            </marker>
-                        </defs>
-                        <symbol id="node" viewBox="0 0 82 92">
-                            <rect x="1" y="1" width="80" height="26"
-                                style="fill:limegreen; stroke-width:2; stroke:black;" />
-                            <text id="nodeNr" x="12" y="20" font-size="18" fill="black" font-weight="500">Node </text>
-                            <rect x="1" y="27" width="80" height="42"
-                                style="fill:white; stroke-width:2; stroke:black;" />
-                            <text id="nodeN" x="5" y="43" font-size="16" fill="black">N = </text>
-                            <path d="M 1 48 81 48" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
-                            <text id="nodeE" x="5" y="64" font-size="16" fill="black">E = </text>
-                            <rect x="1" y="69" width="80" height="21"
-                                style="fill:orange; stroke-width:2; stroke:black;" />
-                            <text id="nodeAttribute" x="5" y="84" font-size="16" fill="black"></text>
-                        </symbol>
-                        <symbol id="leaf" viewBox="0 0 82 133">
-                            <rect x="1" y="1" width="80" height="26"
-                                style="fill:limegreen; stroke-width:2; stroke:black;" />
-                            <text id="leafNr" x="17" y="20" font-size="18" fill="black" font-weight="500">Leaf </text>
-                            <rect x="1" y="27" width="80" height="84"
-                                style="fill:white; stroke-width:2; stroke:black;" />
-                            <text id="leafN" x="5" y="43" font-size="16" fill="black">N = </text>
-                            <path d="M 1 48 81 48" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
-                            <text id="leafYes" x="5" y="64" font-size="16" fill="black">Yes = </text>
-                            <path d="M 1 69 81 69" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
-                            <text id="leafNo" x="5" y="85" font-size="16" fill="black">No = </text>
-                            <path d="M 1 90 81 90" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
-                            <text id="leafE" x="5" y="106" font-size="16" fill="black">E = </text>
-                            <rect x="1" y="111" width="80" height="21"
-                                style="fill:yellow; stroke-width:2; stroke:black;" />
-                            <text id="leafLabel" x="5" y="127" font-size="16" fill="black">Label: </text>
-                        </symbol>
-                        <symbol id="branch">
-                            <path id="branchPath" d="M100 100 100 200" stroke-width="1" stroke="black"
-                                marker-end="url(#arrowMarker)" />
-                            <text>
-                                <textPath id="branchTP" href="#branchPath" startOffset="10">
-                                    <tspan id="branchValue" font-size="16" dy="-0.5%"></tspan>
-                                </textPath>
-                            </text>
-                        </symbol>
-                    </svg>
+        <div class="row mb-4 justify-content-center">
+            <!-- Step-by-step, SVG tree and legend -->
+            <div class="col-xl-7 col-lg-10 col-sm-12 col-12">
+                <!-- Step counter -->
+                <div class="row pb-2 justify-content-center">
+                    <div class="col-auto">
+                        <span id="stepCount">Step: 1</span>
+                    </div>
+                </div>
+                <!-- Step-by-step control bar -->
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group me-2" role="group" aria-label="First group">
+                                <button id="btnInitStep" type="button" class="btn btn-outline-secondary ">
+                                    <script type="module">
+                                        import { initialStep } from './js/stepbystep.js';
+
+                                        document.querySelector('#btnInitStep').addEventListener('click', initialStep);
+                                    </script>
+                                    <div class="bi-chevron-bar-left"></div>
+                                </button>
+                                <button id="btnStepback" type="button" class="btn btn-outline-secondary">
+                                    <script type="module">
+                                        import { stepBack } from './js/stepbystep.js';
+
+                                        document.querySelector('#btnStepback').addEventListener('click', stepBack);
+                                    </script>
+                                    <div class="bi-chevron-compact-left"></div>
+                                </button>
+                                <button id="btnStepForward" type="button" class="btn btn-outline-secondary">
+                                    <script type="module">
+                                        import { stepForward } from './js/stepbystep.js';
+
+                                        document.querySelector('#btnStepForward').addEventListener('click', stepForward);
+                                    </script>
+                                    <div class="bi-chevron-compact-right"></div>
+                                </button>
+                                <button id="btnLastStep" type="button" class="btn btn-outline-secondary">
+                                    <script type="module">
+                                        import { lastStep } from './js/stepbystep.js';
+
+                                        document.querySelector('#btnLastStep').addEventListener('click', lastStep);
+                                    </script>
+                                    <div class="bi-chevron-bar-right">
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Legend -->
+                <div class="row">
+                    <div class="col-auto">
+                        <ul class="list-group list-group-horizontal mt-1">
+                            <li class="list-group-item d-flex align-items-center">
+                                <span class="color-box" style="background-color: #ADD8E6;"></span> Feature name
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <span class="color-box " style="background-color: #FFDD77;"></span> Label value
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Decision Tree -->
+                <div class="row p-2 justify-content-center">
+                    <div class="col-sm-12 col-auto">
+                        <div class="svg-container">
+                            <svg id="svgDT" viewBox="0 0 500 500">
+                                <defs>
+                                    <marker id="arrowMarker" markerWidth="10" markerHeight="10" refX="5" refY="5"
+                                        orient="auto">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="black" />
+                                    </marker>
+                                    <marker id="arrowMarkerReverse" markerWidth="10" markerHeight="10" refX="5" refY="5"
+                                        orient="auto">
+                                        <path d="M 10 0 L 0 5 L 10 10 z" fill="black" />
+                                    </marker>
+                                </defs>
+                                <symbol id="node" viewBox="0 0 82 92">
+                                    <rect x="1" y="1" width="80" height="26"
+                                        style="fill:#A8E6A3; stroke-width:2; stroke:black;" />
+                                    <text id="nodeNr" x="12" y="20" font-size="18" fill="black" font-weight="500">Node
+                                    </text>
+                                    <rect x="1" y="27" width="80" height="42"
+                                        style="fill:white; stroke-width:2; stroke:black;" />
+                                    <text id="nodeN" x="5" y="43" font-size="16" fill="black">N = </text>
+                                    <path d="M 1 48 81 48" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                                    <text id="nodeE" x="5" y="64" font-size="16" fill="black">E = </text>
+                                    <rect x="1" y="69" width="80" height="21"
+                                        style="fill:#ADD8E6; stroke-width:2; stroke:black;" />
+                                    <text id="nodeAttribute" x="5" y="84" font-size="16" fill="black"></text>
+                                </symbol>
+                                <symbol id="leaf" viewBox="0 0 82 133">
+                                    <rect x="1" y="1" width="80" height="26"
+                                        style="fill:#A8E6A3; stroke-width:2; stroke:black;" />
+                                    <text id="leafNr" x="17" y="20" font-size="18" fill="black" font-weight="500">Leaf
+                                    </text>
+                                    <rect x="1" y="27" width="80" height="84"
+                                        style="fill:white; stroke-width:2; stroke:black;" />
+                                    <text id="leafN" x="5" y="43" font-size="16" fill="black">N = </text>
+                                    <path d="M 1 48 81 48" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                                    <text id="leafYes" x="5" y="64" font-size="16" fill="black">Yes = </text>
+                                    <path d="M 1 69 81 69" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                                    <text id="leafNo" x="5" y="85" font-size="16" fill="black">No = </text>
+                                    <path d="M 1 90 81 90" stroke="black" stroke-width="1.3" stroke-dasharray="5.3" />
+                                    <text id="leafE" x="5" y="106" font-size="16" fill="black">E = </text>
+                                    <rect x="1" y="111" width="80" height="21"
+                                        style="fill:#FFDD77; stroke-width:2; stroke:black;" />
+                                    <text id="leafLabel" x="5" y="127" font-size="16" fill="black"></text>
+                                </symbol>
+                                <symbol id="branch">
+                                    <path id="branchPath" d="M100 100 100 200" stroke-width="1" stroke="black"
+                                        marker-end="url(#arrowMarker)" />
+                                    <text>
+                                        <textPath id="branchTP" href="#branchPath" startOffset="10"
+                                            text-anchor="middle">
+                                            <tspan id="branchValue" font-size="16" dy="-0.7%"></tspan>
+                                        </textPath>
+                                    </text>
+                                </symbol>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Data table, value table -->
+            <div class="col-xl-5 col-sm-12 col-auto justify-content-center ">
+                <!-- Data table -->
+                <div class="row-auto mt-2 mb-2 justify-content-center d-flex">
+                    <div class="table-responsive">
+                        <div id="dataTable" class="table-wrapper">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- Value table -->
+                <div class="row-auto justify-content-center d-flex">
+                    <div class="table-responsive">
+                        <div id="valueTable" class="table-wrapper">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -374,7 +509,31 @@
                 </ul>
             </div>
             <div class="col-md-3 col-auto d-flex align-items-center">
-                <span class="fw-light">Last edited: 12-05-2024</span>
+                <span class="date fw-light"></span>
+                <script>
+                    // Get the date of when the repository was last updated and write it into the corresponding footer span
+                    const desiredRepo = "danieldf01.github.io";
+                    const dateTagClass = ".date";
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            let repos = JSON.parse(this.responseText);
+
+                            repos.forEach((repo) => {
+                                if (repo.name == desiredRepo) {
+                                    let lastUpdated = new Date(repo.updated_at);
+                                    let day = lastUpdated.getUTCDate();
+                                    let month = lastUpdated.getUTCMonth() + 1;
+                                    let year = lastUpdated.getUTCFullYear();
+                                    $(dateTagClass).text(`Last updated: ${day}-${month}-${year}`);
+                                }
+                            });
+                        }
+                    };
+                    xhttp.open("GET", "https://api.github.com/users/danieldf01/repos", true);
+                    xhttp.send();
+                </script>
             </div>
         </div>
     </footer>

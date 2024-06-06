@@ -1,13 +1,11 @@
-// Get example data
-import { label1, labelValues1 } from '../exampledata/example1.js';
 import { valueTableGroups } from './tree.js';
 
 var label;
 var labelValues;
 
-// To retrieve locally stored user data
-const userL = 'userLabel';
-const userLV = 'userLabelValues';
+// To retrieve locally stored csv data
+const csvL = 'csvLabel';
+const csvLV = 'csvLabelValues';
 
 const firstHeaderRowCols = 7;
 const indexHeaderLabelCol = 2;
@@ -167,22 +165,24 @@ function createValueTableForLeaf(tableEl, step) {
     var footRow = document.createElement('tr');
     var footCell = document.createElement('td');
     footCell.colSpan = '2';
-    footCell.textContent = 'All labels have the same value';
+    footCell.classList.add('text-center');
+    footCell.classList.add('fw-light');
+    // Is it a "pure" leaf node?
+    if(valueTableGroups[step - 1].includes(0)){
+        footCell.textContent = 'All labels have the same value';
+    } else{
+        footCell.textContent = 'There are no features left to split the current dataset on, so the most frequent class label was chosen';
+    }
     footRow.appendChild(footCell);
     foot.appendChild(footRow);
 
     tableEl.appendChild(foot);
 }
 
-function loadData(userData = false){
-    if (userData) {
-        let userCsvData = JSON.parse(localStorage.getItem('csvData'));
-        label = userCsvData[userL];
-        labelValues = userCsvData[userLV];
-    } else{
-        label = label1;
-        labelValues = labelValues1;
-    }
+function loadData(){
+    let dataCsv = JSON.parse(localStorage.getItem('csvData'));
+    label = dataCsv[csvL];
+    labelValues = dataCsv[csvLV];
 }
 
 function createValueTable(step) {
@@ -208,11 +208,6 @@ function createValueTable(step) {
 
     tableDiv.appendChild(tableEl);
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    loadData(false);
-    createValueTable(1);
-});
 
 export { createValueTable, loadData };
 export default createValueTable;

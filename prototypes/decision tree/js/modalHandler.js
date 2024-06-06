@@ -1,83 +1,116 @@
-import { buildTree, destroyTree } from './tree.js';
-import { createTable } from './table.js';
-import { createValueTable, loadData } from './valueTable.js';
-import { initialStep } from './stepbystep.js';
+import { transformData, getAttributes, getLabelValsDataRows } from './csvHandler.js';
 
 const svgId = 'svgDT';
 
-function csvHandler() {
+const valid = 0;
+const tooManyRows = 1;
+const tooManyLabelVals = 2;
+const numericalVals = 3;
+const notComplete = 4;
+const tooManyCols = 5;
+
+const MAX_ROWS = 151;
+const MAX_COLS = 25;
+
+/**
+ * Checks whether the user-selected CSV file is valid according to the specified requirements
+ * @param {*} data the CSV data
+ * @returns whether or not the user-selected CSV file is valid: returns numerical code for each case
+ */
+function checkUserCsv(data) {
+    if (data.length > MAX_ROWS) {
+        return tooManyRows;
+    }
+
+    const headers = data[0];
+    if (headers.length > MAX_COLS) {
+        return tooManyCols;
+    }
+
+    const attributes = headers.slice(0, -1);
+    const labelValsDataRows = getLabelValsDataRows(data, attributes);
+    const labelVals = labelValsDataRows[0];
+
+    console.log(labelVals);
+    if (labelVals.length > 2) {
+        return tooManyLabelVals;
+    }
+
+    const colNum = attributes.length + 1;
+    for (let i = 1; i < data.length; i++) {
+        let rowCols = 0;
+        for (let j = 0; j < data[i].length; j++) {
+            if (!isNaN(data[i][j])) {
+                return numericalVals;
+            }
+            rowCols++;
+        }
+        if (rowCols != colNum) {
+            return notComplete;
+        }
+    }
+
+
+    return valid;
+}
+
+function handleUserCsv() {
     const fileInput = document.getElementById('csvFile');
     const file = fileInput.files[0];
 
-    if (file && file.type === 'text/csv') {
+    if (file && file.type == 'text/csv') {
         Papa.parse(file, {
             skipEmptyLines: true,
             complete: function (results) {
                 const data = results.data;
 
-                const headers = data[0];
-                const attributes = headers.slice(0, -1);
-                const label = headers[headers.length - 1];
-
-                console.log(attributes);
-                const attributeValues = attributes.map((key, index) => {
-                    const values = new Set();
-                    for (let i = 1; i < data.length; i++) {
-                        values.add(data[i][index]);
+                const checkReturn = checkUserCsv(data);
+                if (checkReturn == valid) {
+                    // Make content container visible if it was still hidden
+                    var contContainer = document.getElementById("contentContainer");
+                    if (contContainer.style.display == "none") {
+                        contContainer.style.display = "block";
                     }
-                    return Array.from(values);
-                });
 
-                const labelValues = new Set();
-                const dataRows = data.slice(1).map(row => {
-                    const attributeObj = {};
-                    attributes.forEach((key, index) => {
-                        attributeObj[key] = row[index];
-                    });
-                    const label = row[row.length - 1];
-                    labelValues.add(label);
-                    return { attributes: attributeObj, label: label };
-                });
+                    // Transform, store the data and build the tables and tree upon it
+                    transformData(data);
 
-                const labelValuesArray = Array.from(labelValues);
+                    // Close the modal
+                    const uploadModal = document.getElementById('uploadModal');
+                    const modal = bootstrap.Modal.getInstance(uploadModal);
+                    modal.hide();
+                    console.log("Huh");
 
-                let csvUserData = {};
-                csvUserData['userAttributes'] = attributes;
-                csvUserData['userAttributeValues'] = attributeValues;
-                csvUserData['userLabel'] = label;
-                csvUserData['userLabelValues'] = labelValuesArray;
-                csvUserData['userData'] = dataRows;
+                    // Change the select placeholder back to "Choose example dataset"
+                    var selectPlaceholder = document.getElementById('selectPlaceholder');
+                    selectPlaceholder.selected = true;
 
-                console.log(csvUserData);
+                    var currentDatasetSpan = document.getElementById('currentDatasetSpan');
+                    currentDatasetSpan.textContent = file.name;
 
-                // Optionally save to local storage or other client-side storage
-                localStorage.setItem('csvData', JSON.stringify(csvUserData));
-
-                const storedData = localStorage.getItem('csvData');
-
-                if(storedData){
-
+                    var datasetCardBody = document.getElementById('datasetCardBody');
+                    datasetCardBody.style.display = "none";
+                } else if (checkReturn == tooManyRows) {
+                    alert('The selected file has more than 150 instance rows. Please check the file requirements.');
+                } else if (checkReturn == tooManyCols) {
+                    alert('The selected file has more than 25 columns. Please check the file requirements.');
+                } else if (checkReturn == tooManyLabelVals) {
+                    alert('The selected file has a target class with more than 2 distinct values. Please check the file requirements.');
+                } else if (checkReturn == numericalVals) {
+                    alert('The selected file includes numerical values. Please check the file requirements.');
+                } else if (checkReturn == notComplete) {
+                    alert('The number of values of at least one row in the selected file does not match the number of features. Please check the file requirements.');
                 }
-
-                // Close the modal
-                const uploadModal = document.getElementById('uploadModal');
-                const modal = bootstrap.Modal.getInstance(uploadModal);
-                modal.hide();
-
-                // Reset everything and build the tree and tables based on the new data 
-                initialStep();
-                var svgEl = document.getElementById(svgId);
-                destroyTree(svgEl);
-                buildTree(true);
-                createTable(true);
-                loadData(true);
-                createValueTable(true);
             }
         });
+    } else if (!file) {
+        alert('No file has been selected. Please select a CSV file and try again.');
+    } else if (file.type != 'text/csv') {
+        alert('The selected file is not in CSV format. Please select a CSV file and try again.');
     } else {
-        alert('Please upload a valid CSV file.');
+        alert('An invalid file has been selected. Please check the file requirements.');
     }
 }
 
-export { csvHandler }
-export default csvHandler;
+export { handleUserCsv }
+export default handleUserCsv;

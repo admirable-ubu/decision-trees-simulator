@@ -1,14 +1,11 @@
-// Get example data
-import { data1, attributes1, label1 } from '../exampledata/example1.js';
-
 var data;
 var attributes;
 var label;
 
-// To retrieve locally stored user data
-const userA = 'userAttributes';
-const userL = 'userLabel';
-const userD = 'userData';
+// To retrieve locally stored csv data
+const csvA = 'csvAttributes';
+const csvL = 'csvLabel';
+const csvD = 'csvDataRows';
 
 function createCountCell(){
     var countCell = document.createElement('td');
@@ -40,17 +37,11 @@ function createBodyRows(count){
     return bodyRow;
 }
 
-function createTable(userData = false){
-    if(userData){
-        let userCsvData = JSON.parse(localStorage.getItem('csvData'));
-        data = userCsvData[userD];
-        attributes = userCsvData[userA];
-        label = userCsvData[userL];
-    } else {
-        data = data1;
-        attributes = attributes1;
-        label = label1;
-    }
+function createTable(){
+    let dataCsv = JSON.parse(localStorage.getItem('csvData'));
+    data = dataCsv[csvD];
+    attributes = dataCsv[csvA];
+    label = dataCsv[csvL];
 
     var tableDiv = document.getElementById('dataTable');
 
@@ -67,8 +58,8 @@ function createTable(userData = false){
     
     // Caption
     var caption = document.createElement('caption');
-    caption.textContent = "Example data 1";
-
+    caption.setAttribute("id", "dataTableCaption");
+    caption.textContent = 'Current rules: none';
     tableEl.appendChild(caption);
 
     // Header
@@ -104,10 +95,6 @@ function createTable(userData = false){
     tableEl.appendChild(body);
     tableDiv.appendChild(tableEl);
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    createTable(false);
-});
 
 export { createTable };
 export default createTable;

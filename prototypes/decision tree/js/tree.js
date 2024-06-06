@@ -5,14 +5,25 @@ const STD_LEAFHEIGHT = 133;
 const STD_NODEHEIGHT = 92;
 const STD_NODEWIDTH = 82;
 
-const STD_BRANCH_FONTSIZE = 12;
+const STD_NODE_NR_X_POS = 12;
+const STD_NODE_NR_WIDTH = 53;
+const STD_NODE_FONTSIZE = 16;
+const MAX_NODE_TEXTWIDTH = STD_NODEWIDTH - 10;
 
-// To retrieve locally stored user data
-const userA = 'userAttributes';
-const userAV = 'userAttributeValues';
-const userL = 'userLabel';
-const userLV = 'userLabelValues';
-const userD = 'userData';
+const STD_LEAF_NR_X_POS = 17;
+const STD_LEAF_NR_WIDTH = 41;
+
+const STD_BRANCH_FONTSIZE = 12;
+const STD_BRANCH_STROKE_WIDTH = 1;
+const STD_BRANCH_DY = -0.7;
+const MAX_BRANCH_TEXT_PATH_RATIO = 0.9;
+
+// To retrieve locally stored csv data
+const csvA = 'csvAttributes';
+const csvAV = 'csvAttributeValues';
+const csvL = 'csvLabel';
+const csvLV = 'csvLabelValues';
+const csvD = 'csvDataRows';
 
 const svgId = 'svgDT';
 var svgWidth = 0;
@@ -31,24 +42,6 @@ var attributes;
 var attributeValues;
 var label;
 var labelValues;
-
-// Get example data
-import { data1, attributes1, attributeValues1, label1, labelValues1 } from '../exampledata/example1.js';
-// const attributes = Object.keys(data[0].attributes);
-
-// import data from '../exampledata/example1.mjs';
-// const attributes = Object.keys(data[0].attributes);
-
-// function loadExampleData(){
-//     fetch('./exampledata/example1.json')
-//     .then(response => response.json())
-//     .then(jsonData => {
-//         data = jsonData;
-//         attributes = Object.keys(data[0].attributes);
-//     })
-//     .catch(error => console.error('Error fetching example data:', error));
-// }
-
 
 class NodeValues {
     constructor(class1, class2, n, entropy) {
@@ -82,19 +75,19 @@ class TreeNode {
 
 
 function mostCommonLabel(data) {
-    var labels = [];
+    let labels = [];
     data.forEach(function (row) {
         labels.push(row.label);
     });
 
-    var counts = {};
-    for (var i = 0; i < labels.length; i++) {
+    let counts = {};
+    for (let i = 0; i < labels.length; i++) {
         counts[labels[i]] = counts[labels[i]] ? counts[labels[i]] + 1 : 1;
     }
 
-    var max = 0;
-    var maxLabel = null;
-    for (var i = 0; i < labels.length; i++) {
+    let max = 0;
+    let maxLabel = null;
+    for (let i = 0; i < labels.length; i++) {
         if (counts[labels[i]] > max) {
             max = counts[labels[i]];
             maxLabel = labels[i];
@@ -108,7 +101,7 @@ function mostCommonLabel(data) {
  * Counts the occurrence of each label value
  */
 function countLabels(labels) {
-    var counts = {};
+    let counts = {};
     for (const label of labels) {
         counts[label] = counts[label] ? counts[label] + 1 : 1;
     }
@@ -117,72 +110,72 @@ function countLabels(labels) {
 
 function entropyLabels(labels) {
     // Count the occurrence of each label value
-    var counts = countLabels(labels);
+    let counts = countLabels(labels);
 
     // Calculate probabilities
-    var sum = labels.length;
-    var pValues = [];
+    let sum = labels.length;
+    let pValues = [];
     for (const labelCount of Object.values(counts)) {
         pValues.push(labelCount / sum);
     }
 
     // Calculate the entropy
-    var e = entropy(pValues);
+    let e = entropy(pValues);
     return e;
 }
 
 function infoGain(data, attribute, valTableGroup) {
     // Save the calculated values for each attribute for the value table
-    var valTabAttribute = {};
-    var valTabAttributeVals = [];
+    let valTabAttribute = {};
+    let valTabAttributeVals = [];
     // Save subset label counts for the value table
-    var valTabSubsetCounts = [];
+    let valTabSubsetCounts = [];
 
     // Save the labels for each of the attribute's instances in an array
-    var attributeIndex = attributes.indexOf(attribute);
-    var attributeLabels = [];
+    let attributeIndex = attributes.indexOf(attribute);
+    let attributeLabels = [];
     data.forEach(function (row) {
         attributeLabels.push([Object.values(row.attributes)[attributeIndex], row.label]);
     });
 
     // Save only the labels to calculate this attribute's entropy
-    var labels = [];
+    let labels = [];
     attributeLabels.forEach(function (row) {
         labels.push(row[1]);
     });
 
     // Caclulate entropy for the whole attribute
-    var e = entropyLabels(labels);
+    let e = entropyLabels(labels);
 
     // Save the attribute values in a set
-    var currentAttributeValues = new Set(data.map(instance => Object.values(instance.attributes)[attributeIndex]));
+    let currentAttributeValues = new Set(data.map(instance => Object.values(instance.attributes)[attributeIndex]));
 
     // Count the number of instances for each value
-    var attributeValuesCounts = (data.map(instance => Object.values(instance.attributes)[attributeIndex]));
+    let attributeValuesCounts = (data.map(instance => Object.values(instance.attributes)[attributeIndex]));
 
-    var counts = {};
+    let counts = {};
     attributeValuesCounts.forEach(function (row) {
         counts[row] = counts[row] ? counts[row] + 1 : 1;
     });
 
     // Calculate the entropy for each value
-    var entropies = [];
+    let entropies = [];
     for (const value of currentAttributeValues) {
-        var subset = attributeLabels.filter(instance => instance[0] === value);
+        let subset = attributeLabels.filter(instance => instance[0] === value);
         // Save only the labels to calculate this attribute's entropy
-        var subsetLabels = [];
+        let subsetLabels = [];
         subset.forEach(function (row) {
             subsetLabels.push(row[1]);
         });
 
         // Transform counts object into array of label counts for the value table
-        var subsetLabelsCount = countLabels(subsetLabels);
-        var subLabCountKeys = Object.keys(subsetLabelsCount);
-        var subLabCountVals = Object.values(subsetLabelsCount);
-        var valTabCounts = [];
-        for (var i = 0; i < labelValues.length; i++) {
+        let subsetLabelsCount = countLabels(subsetLabels);
+        let subLabCountKeys = Object.keys(subsetLabelsCount);
+        let subLabCountVals = Object.values(subsetLabelsCount);
+        let valTabCounts = [];
+        for (let i = 0; i < labelValues.length; i++) {
             if (subLabCountKeys.includes(labelValues[i])) {
-                var index = subLabCountKeys.indexOf(labelValues[i]);
+                let index = subLabCountKeys.indexOf(labelValues[i]);
                 valTabCounts.push(subLabCountVals[index]);
             } else {
                 valTabCounts.push(0);
@@ -194,17 +187,17 @@ function infoGain(data, attribute, valTableGroup) {
     }
 
     // Calculate the conditional entropy
-    var condEntropy = 0;
+    let condEntropy = 0;
     for (const entropy of entropies) {
         condEntropy += entropy[0] * entropy[1];
     }
 
     // Calculate the information gain
-    var infoGain = e - condEntropy;
+    let infoGain = e - condEntropy;
 
     // Save the values for each subset
-    for (var i = 0; i < currentAttributeValues.size; i++) {
-        var subsetValues = [];
+    for (let i = 0; i < currentAttributeValues.size; i++) {
+        let subsetValues = [];
         subsetValues.push(entropies[i][2]);
         subsetValues.push(valTabSubsetCounts[i]);
         subsetValues.push(entropies[i][1].toFixed(2));
@@ -225,10 +218,10 @@ function infoGain(data, attribute, valTableGroup) {
 
 
 function findBestAttribute(data, attributes, valTableGroup) {
-    var bestAttribute = null;
-    var maxGain = 0;
+    let bestAttribute = null;
+    let maxGain = 0;
     attributes.forEach(function (attribute) {
-        var gain = infoGain(data, attribute, valTableGroup);
+        let gain = infoGain(data, attribute, valTableGroup);
         if (gain > maxGain) {
             maxGain = gain;
             bestAttribute = attribute;
@@ -239,20 +232,20 @@ function findBestAttribute(data, attributes, valTableGroup) {
 
 function id3(data, attributes, prevBranchVal, nodeId, leafId) {
     if (data.length === 0) return null;
-    var allPositive = true;
-    var allNegative = true;
-    var class1 = 0;
-    var class2 = 0;
-    var n = data.length;
+    let allPositive = true;
+    let allNegative = true;
+    let class1 = 0;
+    let class2 = 0;
+    let n = data.length;
 
     // Save the labels in an array
-    var datasetLabels = [];
+    let datasetLabels = [];
     data.forEach(function (row) {
         datasetLabels.push(row.label);
     });
 
     // Caclulate entropy for the dataset
-    var e = entropyLabels(datasetLabels).toFixed(2);
+    let e = entropyLabels(datasetLabels).toFixed(2);
 
     for (const row of data) {
         if (row.label == labelValues[1]) {
@@ -266,48 +259,48 @@ function id3(data, attributes, prevBranchVal, nodeId, leafId) {
     }
 
     // Save values for the value table to be able to create it later
-    var valTableGroup = [];
+    let valTableGroup = [];
 
     // Check if we have reached a leaf node
     if (allPositive) {
         valTableGroup = [class1, class2];
         valueTableGroups.push(valTableGroup);
 
-        var nextLeafId = leafId[0] + (+leafId.substring(1) + 1);
+        let nextLeafId = leafId[0] + (+leafId.substring(1) + 1);
         return [new TreeNode(leafId, null, new NodeValues(class1, class2, n, e), true, labelValues[0], prevBranchVal), nodeId, nextLeafId];
     }
     if (allNegative) {
         valTableGroup = [class1, class2];
         valueTableGroups.push(valTableGroup);
 
-        var nextLeafId = leafId[0] + (+leafId.substring(1) + 1);
+        let nextLeafId = leafId[0] + (+leafId.substring(1) + 1);
         return [new TreeNode(leafId, null, new NodeValues(class1, class2, n, e), true, labelValues[1], prevBranchVal), nodeId, nextLeafId];
     }
     if (attributes.length === 0) {
         valTableGroup = [class1, class2];
         valueTableGroups.push(valTableGroup);
 
-        var nextLeafId = leafId[0] + (+leafId.substring(1) + 1);
+        let nextLeafId = leafId[0] + (+leafId.substring(1) + 1);
         return [new TreeNode(leafId, null, new NodeValues(class1, class2, n, e), true, mostCommonLabel(data), prevBranchVal), nodeId, nextLeafId];
     }
 
     // Find the current best attribute to split the data on
-    var bestAttribute = findBestAttribute(data, attributes, valTableGroup);
-    var tree = new TreeNode(nodeId, bestAttribute, new NodeValues(class1, class2, n, e), false, null, null);
+    let bestAttribute = findBestAttribute(data, attributes, valTableGroup);
+    let tree = new TreeNode(nodeId, bestAttribute, new NodeValues(class1, class2, n, e), false, null, null);
     valueTableGroups.push(valTableGroup);
 
     // Split the data on the best attribute
-    var bestAttributeValues = new Set(data.map(instance => instance.attributes[bestAttribute]));
+    let bestAttributeValues = new Set(data.map(instance => instance.attributes[bestAttribute]));
 
     nodeId = nodeId[0] + (+nodeId.substring(1) + 1);
 
     // Do a recursive call for each value of the selected attribute or add a leaf node if the value's subset is empty
     for (const value of bestAttributeValues) {
-        var subset = data.filter(instance => instance.attributes[bestAttribute] === value);
+        let subset = data.filter(instance => instance.attributes[bestAttribute] === value);
 
         dataTableGroups.push([subset]);
 
-        var remainingAttributes = attributes.filter(attribute => attribute !== bestAttribute);
+        let remainingAttributes = attributes.filter(attribute => attribute !== bestAttribute);
 
         if (subset.length === 0) {
             valTableGroup = [class1, class2];
@@ -316,7 +309,7 @@ function id3(data, attributes, prevBranchVal, nodeId, leafId) {
             tree.children.push(new TreeNode(leafId, null, new NodeValues(class1, class2, n, e), true, mostCommonLabel(subset), prevBranchVal));
         } else {
             tree.prevBranchVal = prevBranchVal;
-            var returnVals = id3(subset, remainingAttributes, value, nodeId, leafId);
+            let returnVals = id3(subset, remainingAttributes, value, nodeId, leafId);
             tree.children.push(returnVals[0]);
             nodeId = returnVals[1];
             leafId = returnVals[2];
@@ -339,7 +332,7 @@ function assignParents(node, parent = null) {
 
 function createNewUse(id, href, x, y, width, height) {
     // Create a new 'use' element and set the node's position attributes
-    var newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    let newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     newUse.setAttribute('id', id);
     newUse.setAttribute('href', href);
     newUse.setAttribute('x', x);
@@ -350,86 +343,228 @@ function createNewUse(id, href, x, y, width, height) {
     return newUse
 }
 
+/**
+ * Get the width that a text occupies in an SVG node
+ * @param {*} svgEl The SVG element in which the tree is displayed
+ * @param {*} textToDisplay The text displayed in a node
+ * @returns The width of the displayed text inside the node
+ */
+function getNodeTextWidth(svgEl, textToDisplay) {
+    // Create temporary text element
+    let textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    textEl.setAttribute("x", 0);
+    textEl.setAttribute("y", 0);
+    textEl.setAttribute("font-size", STD_NODE_FONTSIZE);
+    textEl.textContent = textToDisplay;
+
+    // Append the text element to the SVG
+    svgEl.appendChild(textEl);
+
+    // Get the bounding box and width of the text element
+    let bbox = textEl.getBBox();
+
+    // Remove temporary text element again and return width
+    svgEl.removeChild(textEl);
+    return bbox.width;
+}
+
+/**
+ * Checks whether a given text is too wide to be displayed in a node
+ * @param {*} svgEl The SVG element in which the tree is displayed
+ * @param {*} textToDisplay The text that displayed in a node
+ * @returns Ratio between the maximum text width and the actual text width
+ */
+function checkNodeTextTooWide(svgEl, textEl) {
+    // Get text width
+    let textWidth = getNodeTextWidth(svgEl, textEl.textContent);
+
+    // Check if the text width is wider than the maximum acceptable text width, reduce font size if yes
+    let ratio = MAX_NODE_TEXTWIDTH / textWidth;
+    if (ratio < 1) {
+        textEl.setAttribute('font-size', STD_NODE_FONTSIZE * ratio);
+    }
+}
+
+/**
+ * Creates a new SVG symbol/template and use element that displays it based on the given node values
+ * @param {*} nodeId The node id
+ * @param {*} n The number of instances in the subset represented by this node
+ * @param {*} e The entropy of the subset represented by this node
+ * @param {*} attribute The attribute that this node represents / the best attribute of the subset that this node represents
+ * @param {*} x The x coordinate of this node
+ * @param {*} y The y coordinate of this node
+ * @param {*} width The width of this node
+ * @param {*} height The height of this node
+ * @returns The use element that displays the created SVG symbol
+ */
 function createNode(nodeId, n, e, attribute, x, y, width, height) {
-    var svgEl = document.getElementById(svgId);
-    var nodeTemplate = document.getElementById('node');
-    var nodeNumber = nodeId.substring(1);
+    let svgEl = document.getElementById(svgId);
+    let nodeTemplate = document.getElementById('node');
+    let nodeNumber = nodeId.substring(1);
 
     // Clone the template
-    var clonedTemplate = nodeTemplate.cloneNode(true);
+    let clonedTemplate = nodeTemplate.cloneNode(true);
     clonedTemplate.setAttribute('id', 'node' + nodeNumber);
 
-    // Update text contents
+    // Update text contents and check for each if the text is too wide, reduce the font size if yes
+    // For the node number text, check if it is still placed in the middle
     clonedTemplate.querySelector('#nodeNr').textContent += nodeNumber;
+    let widthNodeNr = getNodeTextWidth(svgEl, clonedTemplate.querySelector('#nodeNr').textContent);
+    if (widthNodeNr > STD_NODE_NR_WIDTH) {
+        clonedTemplate.querySelector('#nodeNr').setAttribute('x', STD_NODE_NR_X_POS - ((widthNodeNr - STD_NODE_NR_WIDTH) / 2));
+    }
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#nodeNr'));
+
     clonedTemplate.querySelector('#nodeN').textContent += n;
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#nodeN'));
+
+    // Entropy can never be too wide (only values between 0 and 1 with a fixed 2 decimal points are displayed)
     clonedTemplate.querySelector('#nodeE').textContent += e;
+
     clonedTemplate.querySelector('#nodeAttribute').textContent = attribute;
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#nodeAttribute'));
 
     // Append cloned template to the svg and return the use element
     svgEl.appendChild(clonedTemplate);
     return createNewUse('useNode' + nodeNumber, '#node' + nodeNumber, x, y, width, height);
 }
 
-
+/**
+ * Creates a new SVG symbol/template and use element that displays it based on the given node values
+ * @param {*} leafId The leaf id
+ * @param {*} n The number of instances in the subset represented by this leaf
+ * @param {*} class1 The number of instances in this subset belonging to class 1
+ * @param {*} class2 The number of instances in this subset belonging to class 2
+ * @param {*} e The entropy of the subset represented by this leaf
+ * @param {*} label The label value that this leaf represents based on the given subset
+ * @param {*} x The x coordinate of this node
+ * @param {*} y The y coordinate of this node
+ * @param {*} width The width of this node
+ * @param {*} height The height of this node
+ * @returns The use element that displays the created SVG symbol
+ */
 function createLeaf(leafId, n, class1, class2, e, label, x, y, width, height) {
-    var svgEl = document.getElementById(svgId);
-    var leafTemplate = document.getElementById('leaf');
-    var leafNumber = leafId.substring(1);
+    let svgEl = document.getElementById(svgId);
+    let leafTemplate = document.getElementById('leaf');
+    let leafNumber = leafId.substring(1);
 
     // Clone the template
-    var clonedTemplate = leafTemplate.cloneNode(true);
+    let clonedTemplate = leafTemplate.cloneNode(true);
     clonedTemplate.setAttribute('id', 'leaf' + leafNumber);
 
-    // Update text contents
+    // Update text contents and check for each if the text is too wide, reduce the font size if yes
     clonedTemplate.querySelector('#leafNr').textContent += leafNumber;
+    let widthLeafNr = getNodeTextWidth(svgEl, clonedTemplate.querySelector('#leafNr').textContent);
+    if (widthLeafNr > STD_LEAF_NR_WIDTH) {
+        clonedTemplate.querySelector('#leafNr').setAttribute('x', STD_LEAF_NR_X_POS - ((widthLeafNr - STD_LEAF_NR_WIDTH) / 2));
+    }
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafNr'));
+
     clonedTemplate.querySelector('#leafN').textContent += n;
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafN'));
+
     clonedTemplate.querySelector('#leafYes').textContent = labelValues[0] + ' = ' + class1;
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafYes'));
+
     clonedTemplate.querySelector('#leafNo').textContent = labelValues[1] + ' = ' + class2;
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafNo'));
+
+    // Entropy can never be too wide (only values between 0 and 1 with a fixed 2 decimal points are displayed)
     clonedTemplate.querySelector('#leafE').textContent += e;
-    clonedTemplate.querySelector('#leafLabel').textContent += label;
+
+    clonedTemplate.querySelector('#leafLabel').textContent = label;
+    checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafLabel'));
 
     // Append cloned template to the svg and return the use element
     svgEl.appendChild(clonedTemplate);
     return createNewUse('useLeaf' + leafNumber, '#leaf' + leafNumber, x, y, width, height);
 }
 
+/**
+ * Checks whether a given text is too wide to be displayed alongside a branch
+ * @param {*} svgEl The SVG element in which the tree is displayed
+ * @param {*} path The path element along which the text is displayed
+ * @param {*} textToDisplay The text that is displayed alongside the branch
+ * @param {*} fontSize The font size of the text
+ * @param {*} textSpanEl The textSpan element that contains the text and sets the font size
+ */
+function checkBranchTextTooWide(svgEl, path, textToDisplay, fontSize, textSpanEl) {
+    // Create a temporary SVG text element to measure text length
+    let textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    textEl.setAttribute("font-size", fontSize);
 
-function createBranch(nodeId, x1, y1, x2, y2, value) {
-    var svgEl = document.getElementById(svgId);
-    var branchTemplate = document.getElementById('branch');
+    textEl.textContent = textToDisplay;
+    svgEl.appendChild(textEl);
+
+    // Get the bounding box and width of the text element and the path length
+    let bbox = textEl.getBBox();
+    let textWidth = bbox.width;
+    let pathLength = path.getTotalLength();
+
+    let textPathratio = textWidth / pathLength;
+
+    if (textPathratio > MAX_BRANCH_TEXT_PATH_RATIO) {
+        let newFontSizeRatio = MAX_BRANCH_TEXT_PATH_RATIO / textPathratio;
+        textSpanEl.setAttribute('font-size', fontSize * newFontSizeRatio);
+    }
+
+    // Remove temporary text element again
+    svgEl.removeChild(textEl);
+}
+
+/**
+ * Creates a new SVG symbol/template and use element that displays it based on the given branch values
+ * @param {*} nodeId The id of the node the branch points to
+ * @param {*} x1 The branch's x1 value
+ * @param {*} y1 The branch's y1 value
+ * @param {*} x2 The branch's x2 value
+ * @param {*} y2 The branch's y2 value
+ * @param {*} value The branch's text
+ * @param {*} sizeRatio The nodes' size ratio that is relative to the svg's width and height; used to scale the branch
+ * @returns The use element that displays the created SVG symbol
+ */
+function createBranch(nodeId, x1, y1, x2, y2, value, sizeRatio) {
+    const svgEl = document.getElementById(svgId);
+    let branchTemplate = document.getElementById('branch');
 
     // Clone the template
-    var clonedTemplate = branchTemplate.cloneNode(true);
+    let clonedTemplate = branchTemplate.cloneNode(true);
     clonedTemplate.setAttribute('id', 'branch' + nodeId);
 
-    var templateBranchPathId = 'branchPath';
-    var templateBranchTPid = 'branchTP';
+    const templateBranchPathId = 'branchPath';
+    const templateBranchTPid = 'branchTP';
+    const templateBranchValueId = 'branchValue';
 
     // Update position attributes and ids
+    let positionAttribute = '';
     if (x2 < x1) {
-        var positionAttribute = 'M' + x2 + ' ' + y2 + ' ' + x1 + ' ' + y1;
+        positionAttribute = 'M' + x2 + ' ' + y2 + ' ' + x1 + ' ' + y1;
         clonedTemplate.querySelector('#' + templateBranchPathId).setAttribute('marker-end', '');
         clonedTemplate.querySelector('#' + templateBranchPathId).setAttribute('marker-start', 'url(#arrowMarkerReverse)');
     } else {
-        var positionAttribute = 'M' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2;
+        positionAttribute = 'M' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2;
         clonedTemplate.querySelector('#' + templateBranchPathId).setAttribute('marker-end', 'url(#arrowMarker)');
     }
     clonedTemplate.querySelector('#' + templateBranchPathId).setAttribute('d', positionAttribute);
-    clonedTemplate.querySelector('#branchValue').textContent = value;
+    clonedTemplate.querySelector('#' + templateBranchPathId).setAttribute('stroke-width', sizeRatio * STD_BRANCH_STROKE_WIDTH);
 
-    var textSizeRatio = (y2 - y1) / 100;
-    clonedTemplate.querySelector('#branchValue').setAttribute('font-size', textSizeRatio * STD_BRANCH_FONTSIZE);
-    if (x1 === x2) {
-        clonedTemplate.querySelector('#' + templateBranchTPid).setAttribute('startOffset', (y2 - y1) * 0.1);
-    } else {
-        clonedTemplate.querySelector('#' + templateBranchTPid).setAttribute('startOffset', (y2 - y1) * 0.2);
-    }
+    clonedTemplate.querySelector('#' + templateBranchValueId).textContent = value;
+    let textSizeRatio = (y2 - y1) / 100;
+    let fontSize = textSizeRatio * STD_BRANCH_FONTSIZE;
+    clonedTemplate.querySelector('#' + templateBranchValueId).setAttribute('font-size', fontSize);
+    clonedTemplate.querySelector('#' + templateBranchValueId).setAttribute('dy', sizeRatio * STD_BRANCH_DY + '%');
+    clonedTemplate.querySelector('#' + templateBranchTPid).setAttribute('startOffset', '50%');
+
+    // Check if the branch text is too wide to fit the branch
+    checkBranchTextTooWide(svgEl, clonedTemplate.querySelector('#' + templateBranchPathId), clonedTemplate.querySelector('#' + templateBranchValueId).textContent, fontSize, clonedTemplate.querySelector('#' + templateBranchValueId))
+
     clonedTemplate.querySelector('#' + templateBranchPathId).setAttribute('id', templateBranchPathId + nodeId);
     clonedTemplate.querySelector('#' + templateBranchTPid).setAttribute('href', '#' + templateBranchPathId + nodeId);
     clonedTemplate.querySelector('#' + templateBranchTPid).setAttribute('id', templateBranchTPid + nodeId);
+    clonedTemplate.querySelector('#' + templateBranchValueId).setAttribute('id', templateBranchValueId + nodeId);
 
     // Create a new 'use' element
-    var newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    let newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     newUse.setAttribute('id', 'useBranch' + nodeId);
     newUse.setAttribute('href', '#branch' + nodeId);
 
@@ -438,13 +573,52 @@ function createBranch(nodeId, x1, y1, x2, y2, value) {
     return newUse;
 }
 
+// Creates/draws the nodes and adds them to groups
+function createNodes(node, nodeIndex, svgEl, groupId, nodeWidth, nodeHeight, leafHeight, sizeRatio) {
+    let group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute("id", groupId);
+
+    let useNode = null;
+    // No branch going into the root node
+    if (node.depth === 0) {
+        useNode = createNode(node.id, node.nodeValues.n, node.nodeValues.entropy, node.attribute, node.x, node.y, nodeWidth, nodeHeight);
+        group.appendChild(useNode);
+        svgEl.appendChild(group);
+
+    } else {
+        let nodeSplitByChildren = nodeWidth / node.parent.children.length;
+        let x1Value = node.parent.x + (nodeSplitByChildren - (nodeSplitByChildren / 2) + (nodeIndex * nodeSplitByChildren));
+        let useBranch = createBranch(node.id, x1Value, (node.parent.y + nodeHeight) - 1, node.x + (nodeWidth / 2), node.y - 1, node.prevBranchVal, sizeRatio)
+
+        if (node.children.length === 0) {
+            useNode = createLeaf(node.id, node.nodeValues.n, node.nodeValues.class1, node.nodeValues.class2, node.nodeValues.entropy, node.label,
+                node.x, node.y, nodeWidth, leafHeight);
+        } else {
+            useNode = createNode(node.id, node.nodeValues.n, node.nodeValues.entropy, node.attribute, node.x, node.y, nodeWidth, nodeHeight);
+        }
+        group.appendChild(useBranch);
+        group.appendChild(useNode);
+        svgEl.appendChild(group);
+        group.style.display = 'none';
+
+        if (node.children.length === 0) {
+            return groupId;
+        }
+    }
+
+    for (let i = 0; i < node.children.length; i++) {
+        groupId = createNodes(node.children[i], i, svgEl, 'g' + (+groupId.substring(1) + 1), nodeWidth, nodeHeight, leafHeight, sizeRatio);
+    }
+
+    return groupId;
+}
 
 // Calculate the tree's depth (including the root node)
 function calcTreeDepth(rootNode) {
     if (!rootNode) return 0;
     if (rootNode.children.length === 0) return 1;
 
-    var maxDepth = 0;
+    let maxDepth = 0;
 
     rootNode.children.forEach(child => {
         maxDepth = Math.max(maxDepth, calcTreeDepth(child));
@@ -458,8 +632,8 @@ function calcTreeWidth(rootNode) {
     if (!rootNode) return 0;
     if (rootNode.children.length === 0) return 0;
 
-    var maxWidth = 0;
-    var maxWidth2 = 0;
+    let maxWidth = 0;
+    let maxWidth2 = 0;
 
     rootNode.children.forEach(child => {
         maxWidth++;
@@ -504,7 +678,7 @@ function countNodesAtEachLevel(root) {
  * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function calcInitialX(node, nodeIndex, columnWidth, currentLevel = 0) {
-    for (var i = 0; i < node.children.length; i++) {
+    for (let i = 0; i < node.children.length; i++) {
         calcInitialX(node.children[i], i, columnWidth, currentLevel + 1);
     }
 
@@ -527,7 +701,7 @@ function calcInitialX(node, nodeIndex, columnWidth, currentLevel = 0) {
 
         // Position nodes that have more than one child in the middle between their children, except if they have siblings
     } else {
-        var middle = (node.children[0].x + node.children[node.children.length - 1].x) / 2;
+        let middle = (node.children[0].x + node.children[node.children.length - 1].x) / 2;
         if (nodeIndex === 0) {
             node.x = middle;
         } else {
@@ -548,26 +722,26 @@ function calcInitialX(node, nodeIndex, columnWidth, currentLevel = 0) {
  */
 function checkForConflicts(node, columnWidth, currentLevel, nodeIndex) {
     // Nodes should at least be one column width apart from each other
-    var minDistance = columnWidth;
-    var shift = 0;
+    let minDistance = columnWidth;
+    let shift = 0;
 
-    var leftEdges = calcLeftEdges(node, 0, currentLevel);
+    let leftEdges = calcLeftEdges(node, 0, currentLevel);
 
-    var siblingIndex = 0;
-    var currentSibling = node.parent.children[siblingIndex];
+    let siblingIndex = 0;
+    let currentSibling = node.parent.children[siblingIndex];
     // Go through all siblings that are left of the node
     while (currentSibling != null && currentSibling != node) {
-        var rightEdges = calcRightEdges(currentSibling, 0, currentLevel);
+        let rightEdges = calcRightEdges(currentSibling, 0, currentLevel);
 
-        var leftEdgesKeys = Object.keys(leftEdges).map(Number);
-        var maxLeftEdgesKey = leftEdgesKeys.reduce((a, b) => Math.max(a, b), -Infinity);
+        let leftEdgesKeys = Object.keys(leftEdges).map(Number);
+        let maxLeftEdgesKey = leftEdgesKeys.reduce((a, b) => Math.max(a, b), -Infinity);
 
-        var rightEdgesKeys = Object.keys(rightEdges).map(Number);
-        var maxRightEdgesKey = rightEdgesKeys.reduce((a, b) => Math.max(a, b), -Infinity);
+        let rightEdgesKeys = Object.keys(rightEdges).map(Number);
+        let maxRightEdgesKey = rightEdgesKeys.reduce((a, b) => Math.max(a, b), -Infinity);
 
         // Go through all subtrees that are left and right of the node
-        for (var level = currentLevel + 1; level <= Math.min(maxRightEdgesKey, maxLeftEdgesKey); level++) {
-            var dist = leftEdges[level] - rightEdges[level];
+        for (let level = currentLevel + 1; level <= Math.min(maxRightEdgesKey, maxLeftEdgesKey); level++) {
+            let dist = leftEdges[level] - rightEdges[level];
             // If the distance is less than the minimum distance, increase the necessary shift
             if (dist + shift < minDistance) {
                 shift = minDistance - dist;
@@ -595,25 +769,22 @@ function checkForConflicts(node, columnWidth, currentLevel, nodeIndex) {
  * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function centerNodesBetween(leftNode, rightNode, leftIndex, rightIndex) {
-    var numNodesBetween = (rightIndex - leftIndex) - 1;
+    let numNodesBetween = (rightIndex - leftIndex) - 1;
 
     if (numNodesBetween > 0) {
-        var distanceBetweenNodes = (leftNode.x - rightNode.x) / (numNodesBetween + 1);
+        let distanceBetweenNodes = (leftNode.x - rightNode.x) / (numNodesBetween + 1);
 
-        var count = 1;
-        for (var i = leftIndex + 1; i < rightIndex; i++) {
-            var middleNode = leftNode.parent.children[i];
+        let count = 1;
+        for (let i = leftIndex + 1; i < rightIndex; i++) {
+            let middleNode = leftNode.parent.children[i];
 
-            var desiredX = rightNode.x + (distanceBetweenNodes * count);
-            var offset = desiredX - middleNode.x;
+            let desiredX = rightNode.x + (distanceBetweenNodes * count);
+            let offset = desiredX - middleNode.x;
             middleNode.x += offset;
             middleNode.mod += offset;
 
             count++;
         }
-
-        // Double check for conflicts
-        checkForConflicts(leftNode);
     }
 
 }
@@ -663,10 +834,10 @@ function calcRightEdges(node, modSum, currentLevel, edges = {}) {
  * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function checkInBounds(node) {
-    var leftEdges = calcLeftEdges(node, 0, 0);
+    let leftEdges = calcLeftEdges(node, 0, 0);
 
-    var rightShift = 0;
-    for (var level in Object.keys(leftEdges)) {
+    let rightShift = 0;
+    for (let level in Object.keys(leftEdges)) {
         // Check if any node has gone out of bounds on the left side
         if (leftEdges[level] + rightShift < 0) {
             rightShift = (leftEdges[level] * -1);
@@ -698,53 +869,13 @@ function calcFinalPositions(node, modSum, leafHeight) {
     }
 }
 
-// Creates/draws the nodes and adds them to groups
-function createNodes(node, nodeIndex, svgEl, groupId, nodeWidth, nodeHeight, leafHeight) {
-    var group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    group.setAttribute("id", groupId);
-
-    var useNode = null;
-    // No branch going into the root node
-    if (node.depth === 0) {
-        useNode = createNode(node.id, node.nodeValues.n, node.nodeValues.entropy, node.attribute, node.x, node.y, nodeWidth, nodeHeight);
-        group.appendChild(useNode);
-        svgEl.appendChild(group);
-
-    } else {
-        var nodeSplitByChildren = nodeWidth / node.parent.children.length;
-        var x1Value = node.parent.x + (nodeSplitByChildren - (nodeSplitByChildren / 2) + (nodeIndex * nodeSplitByChildren));
-        var useBranch = createBranch(node.id, x1Value, (node.parent.y + nodeHeight) - 1, node.x + (nodeWidth / 2), node.y - 1, node.prevBranchVal)
-
-        if (node.children.length === 0) {
-            useNode = createLeaf(node.id, node.nodeValues.n, node.nodeValues.class1, node.nodeValues.class2, node.nodeValues.entropy, node.label,
-                node.x, node.y, nodeWidth, leafHeight);
-        } else {
-            useNode = createNode(node.id, node.nodeValues.n, node.nodeValues.entropy, node.attribute, node.x, node.y, nodeWidth, nodeHeight);
-        }
-        group.appendChild(useBranch);
-        group.appendChild(useNode);
-        svgEl.appendChild(group);
-        group.style.display = 'none';
-
-        if (node.children.length === 0) {
-            return groupId;
-        }
-    }
-
-    for (var i = 0; i < node.children.length; i++) {
-        groupId = createNodes(node.children[i], i, svgEl, 'g' + (+groupId.substring(1) + 1), nodeWidth, nodeHeight, leafHeight);
-    }
-
-    return groupId;
-}
-
 // Centers the tree in the SVG if there are still space left on the right side
 function centerTree(node, nodeWidth) {
-    var rightEdges = calcRightEdges(node, 0, 0);
-    var rightEdgesVals = Object.values(rightEdges).map(Number);
-    var maxRightEdgesVal = rightEdgesVals.reduce((a, b) => Math.max(a, b), -Infinity);
+    let rightEdges = calcRightEdges(node, 0, 0);
+    let rightEdgesVals = Object.values(rightEdges).map(Number);
+    let maxRightEdgesVal = rightEdgesVals.reduce((a, b) => Math.max(a, b), -Infinity);
 
-    var freeSpace = (svgWidth - maxRightEdgesVal) - nodeWidth;
+    let freeSpace = (svgWidth - maxRightEdgesVal) - nodeWidth;
 
     if (freeSpace > 0) {
         node.x += freeSpace / 2;
@@ -753,7 +884,7 @@ function centerTree(node, nodeWidth) {
 }
 
 function calcPositions(root, nodeWidth, leafHeight, columnWidth) {
-    var queue = [root];
+    let queue = [root];
 
     // Assign depth to each node and reset their positional values (in case the SVG tree is being rebuilt)
     while (queue.length > 0) {
@@ -784,9 +915,9 @@ function calcPositions(root, nodeWidth, leafHeight, columnWidth) {
  */
 function dataTableGroupsAddColumns(node, i = 0) {
     if (node.parent != null) {
-        var reachedRoot = false;
-        var attributesToMark = [];
-        var currentNode = node.parent;
+        let reachedRoot = false;
+        let attributesToMark = [];
+        let currentNode = node.parent;
 
         while (!reachedRoot) {
             attributesToMark.push(currentNode.attribute);
@@ -811,8 +942,8 @@ function dataTableGroupsAddColumns(node, i = 0) {
  * Transform the data table groups array elements into indeces so that stepbystep.js can work with it
  */
 function transformDataTableGroups() {
-    for (var i = 1; i < nodeCount + leafCount; i++) {
-        var markedRows = [];
+    for (let i = 1; i < nodeCount + leafCount; i++) {
+        let markedRows = [];
         dataTableGroups[i - 1][0].forEach(function (selectedRow) {
             data.forEach(function (row, j) {
                 if (selectedRow == row) {
@@ -822,7 +953,7 @@ function transformDataTableGroups() {
         });
         dataTableGroups[i - 1][0] = markedRows;
 
-        var markedCols = [];
+        let markedCols = [];
         dataTableGroups[i - 1][1].forEach(function (attribute) {
             markedCols.push(attributes.indexOf(attribute));
         });
@@ -832,67 +963,65 @@ function transformDataTableGroups() {
 
 function buildSvgTree() {
     // Get array that holds the amount of nodes in each level/row
-    var levels = countNodesAtEachLevel(decisionTree);
+    let levels = countNodesAtEachLevel(decisionTree);
 
     // A row is a row of (leaf) nodes or branches 
-    var rows = levels.length + (levels.length - 1);
-    var rowHeight = svgHeight / rows;
-    var heightRatio = rowHeight / STD_LEAFHEIGHT;
+    let rows = levels.length + (levels.length - 1);
+    let rowHeight = svgHeight / rows;
+    let heightRatio = rowHeight / STD_LEAFHEIGHT;
 
-    var maxColumns = levels.reduce((a, b) => Math.max(a, b), -Infinity);
-    var columnWidth = (svgWidth / (maxColumns));
+    let maxColumns = levels.reduce((a, b) => Math.max(a, b), -Infinity);
+
+    let columnWidth = (svgWidth / (maxColumns));
     // Nodes need to be a bit smaller than a column so there is space between them
-    var nodeWidth = (svgWidth / (maxColumns + maxColumns * 0.1));
-    var widthRatio = nodeWidth / STD_NODEWIDTH;
+    let nodeWidth = (svgWidth / (maxColumns + maxColumns * 0.3));
+    let columnNodeWidthRatio = columnWidth / nodeWidth;
+    let widthRatio = nodeWidth / STD_NODEWIDTH;
 
     // Choose the smaller ratio so the nodes don't go out ouf bounds
-    var sizeRatio = Math.min(widthRatio, heightRatio);
+    let sizeRatio = Math.min(widthRatio, heightRatio);
+    // Make sure the nodes won't be too big if it's just a small tree
+    sizeRatio = Math.min(sizeRatio, 1);
 
     // Calculate leaf and node height with the size ratio
-    var leafHeight = STD_LEAFHEIGHT * sizeRatio;
-    var nodeHeight = STD_NODEHEIGHT * sizeRatio;
+    let leafHeight = STD_LEAFHEIGHT * sizeRatio;
+    let nodeHeight = STD_NODEHEIGHT * sizeRatio;
 
     // Both leaf and decision nodes have the same width
-    var realNodeWidth = STD_NODEWIDTH * sizeRatio;
+    let actualNodeWidth = STD_NODEWIDTH * sizeRatio;
+    // The column width is a little bigger so there will be space between the nodes
+    let actualColumnWidth = actualNodeWidth * columnNodeWidthRatio;
 
-    calcPositions(decisionTree, realNodeWidth, leafHeight, columnWidth);
+    calcPositions(decisionTree, actualNodeWidth, leafHeight, actualColumnWidth);
 
-    var svgEl = document.getElementById(svgId);
-    createNodes(decisionTree, 0, svgEl, "g1", realNodeWidth, nodeHeight, leafHeight);
+    let svgEl = document.getElementById(svgId);
+    createNodes(decisionTree, 0, svgEl, "g1", actualNodeWidth, nodeHeight, leafHeight, sizeRatio);
 }
 
-function buildTree(userData = false) {
-    if (userData) {
-        let userCsvData = JSON.parse(localStorage.getItem('csvData'));
-        data = userCsvData[userD];
-        attributes = userCsvData[userA];
-        attributeValues = userCsvData[userAV];
-        label = userCsvData[userL];
-        labelValues = userCsvData[userLV];
-    } else {
-        data = data1
-        attributes = attributes1;
-        attributeValues = attributeValues1;
-        label = label1;
-        labelValues = labelValues1;
-    }
+function buildTree() {
+    let dataCsv = JSON.parse(localStorage.getItem('csvData'));
+    data = dataCsv[csvD];
+    attributes = dataCsv[csvA];
+    attributeValues = dataCsv[csvAV];
+    label = dataCsv[csvL];
+    labelValues = dataCsv[csvLV];
 
     dataTableGroups = [];
     valueTableGroups = [];
 
-    var treeValues = id3(data, attributes, null, "n1", "l1");
+    let treeValues = id3(data, attributes, null, "n1", "l1");
     decisionTree = treeValues[0];
     nodeCount = +treeValues[1].substring(1) - 1;
     leafCount = +treeValues[2].substring(1) - 1;
 
-    // var newNode = new TreeNode("n4", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test1');
-    // var newNode2 = new TreeNode("n5", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test2');
-    // var newNode3 = new TreeNode("n6", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test3');
-    // var newNode4 = new TreeNode("n7", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test4');
-    // var newLeaf = new TreeNode("l6", null, new NodeValues(3, 0, 3, 0), true, 'Yes', 'testl1');
-    // var newLeaf2 = new TreeNode("l7", null, new NodeValues(0, 3, 3, 0), true, 'No', 'testl2');
-    // var newLeaf3 = new TreeNode("l8", null, new NodeValues(0, 3, 3, 0), true, 'no', 'testl3');
-    // var newLeaf4 = new TreeNode("l9", null, new NodeValues(0, 3, 3, 0), true, 'no', 'testl4');
+    // let newNode = new TreeNode("n4", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test1');
+    // let newNode2 = new TreeNode("n5", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test2');
+    // let newNode3 = new TreeNode("n6", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test3');
+    // let newNode4 = new TreeNode("n7", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test4');
+    // let newLeaf = new TreeNode("l6", null, new NodeValues(3, 0, 3, 0), true, 'Yes', 'testl1');
+    // let newLeaf2 = new TreeNode("l7", null, new NodeValues(0, 3, 3, 0), true, 'No', 'testl2');
+    // let newLeaf3 = new TreeNode("l8", null, new NodeValues(0, 3, 3, 0), true, 'no', 'testl3');
+    // let newLeaf4 = new TreeNode("l9", null, new NodeValues(0, 3, 3, 0), true, 'no', 'testl4');
     // decisionTree.children.push(newNode);
     // decisionTree.children.push(newNode2);
     // decisionTree.children[3].children.push(newLeaf);
@@ -927,7 +1056,7 @@ function buildTree(userData = false) {
     console.log(decisionTree);
 
     // Get SVG sizes
-    var svgSizes = calcSvgSize();
+    let svgSizes = calcSvgSize();
     svgWidth = svgSizes[0];
     svgHeight = svgSizes[1];
     resizeViewBox();
@@ -935,8 +1064,8 @@ function buildTree(userData = false) {
     // Build the SVG tree
     buildSvgTree();
 
-    // var svg = document.getElementById(svgId);
-    // var groups = svg.getElementsByTagName('g');
+    // let svg = document.getElementById(svgId);
+    // let groups = svg.getElementsByTagName('g');
     // for (const group of groups) {
     //     group.style.display = "block";
     // }
@@ -944,34 +1073,44 @@ function buildTree(userData = false) {
 
 function destroyTree(svgEl) {
     // Remove all the groups in which the use elements are located
-    for (var i = 0; i < nodeCount + leafCount; i++) {
-        var groupId = 'g' + (i + 1);
-        var groupToRemove = document.getElementById(groupId);
-        svgEl.removeChild(groupToRemove);
+    for (let i = 0; i < nodeCount + leafCount; i++) {
+        let groupId = 'g' + (i + 1);
+        let groupToRemove = document.getElementById(groupId);
+        if (groupToRemove != null) {
+            svgEl.removeChild(groupToRemove);
+        }
     }
 
     // Remove all the specifically created symbols/templates related to nodes
-    for (var i = 0; i < nodeCount; i++) {
-        var nodeId = 'node' + (i + 1);
-        var nodeToRemove = document.getElementById(nodeId);
-        svgEl.removeChild(nodeToRemove);
+    for (let i = 0; i < nodeCount; i++) {
+        let nodeId = 'node' + (i + 1);
+        let nodeToRemove = document.getElementById(nodeId);
+        if (nodeToRemove != null) {
+            svgEl.removeChild(nodeToRemove);
+        }
 
         // There is no branch belonging to the root node
         if (i === 0) continue;
-        var branchId = 'branchn' + (i + 1);
-        var branchToRemove = document.getElementById(branchId);
-        svgEl.removeChild(branchToRemove);
+        let branchId = 'branchn' + (i + 1);
+        let branchToRemove = document.getElementById(branchId);
+        if (branchToRemove != null) {
+            svgEl.removeChild(branchToRemove);
+        }
     }
 
     //Remove all the specifically created symbols/templates related to leaves
-    for (var i = 0; i < leafCount; i++) {
-        var leafId = 'leaf' + (i + 1);
-        var leafToRemove = document.getElementById(leafId);
-        svgEl.removeChild(leafToRemove);
+    for (let i = 0; i < leafCount; i++) {
+        let leafId = 'leaf' + (i + 1);
+        let leafToRemove = document.getElementById(leafId);
+        if (leafToRemove != null) {
+            svgEl.removeChild(leafToRemove);
+        }
 
-        var branchId = 'branchl' + (i + 1);
-        var branchToRemove = document.getElementById(branchId);
-        svgEl.removeChild(branchToRemove);
+        let branchId = 'branchl' + (i + 1);
+        let branchToRemove = document.getElementById(branchId);
+        if (branchToRemove != null) {
+            svgEl.removeChild(branchToRemove);
+        }
     }
 }
 
@@ -986,7 +1125,7 @@ function resetPosVals(node) {
 }
 
 function calcSvgSize() {
-    var svgEl = document.getElementById(svgId);
+    let svgEl = document.getElementById(svgId);
     const rect = svgEl.getBoundingClientRect();
 
     const width = rect.width;
@@ -999,19 +1138,19 @@ function calcSvgSize() {
 }
 
 function resizeViewBox() {
-    var svgEl = document.getElementById(svgId);
+    let svgEl = document.getElementById(svgId);
     svgEl.setAttribute('viewBox', '0 0 ' + svgWidth + ' ' + svgHeight);
 }
 
 function handleResize() {
-    var newSizes = calcSvgSize();
+    let newSizes = calcSvgSize();
     if (newSizes[0] != svgWidth || newSizes[1] != svgHeight) {
         svgWidth = newSizes[0];
         svgHeight = newSizes[1];
         resizeViewBox();
 
         // Rebuild the tree with the new sizes
-        var svgEl = document.getElementById(svgId);
+        let svgEl = document.getElementById(svgId);
         destroyTree(svgEl);
         resetPosVals(decisionTree);
         buildSvgTree();
@@ -1019,9 +1158,7 @@ function handleResize() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    buildTree(false);
-});
 window.onresize = handleResize;
 
 export { mostCommonLabel, entropyLabels, infoGain, findBestAttribute, id3, calcTreeDepth, calcTreeWidth, createNode, createLeaf, createBranch, buildTree, destroyTree, nodeCount, leafCount, dataTableGroups, valueTableGroups }
+export default buildTree;
