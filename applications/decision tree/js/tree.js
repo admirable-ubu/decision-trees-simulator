@@ -43,6 +43,7 @@ var attributeValues;
 var label;
 var labelValues;
 
+
 class NodeValues {
     constructor(class1, class2, n, entropy) {
         this.class1 = class1;
