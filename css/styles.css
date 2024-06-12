@@ -17,9 +17,11 @@ footer {
 }
 
 
-/* For making the table scroll vertically if it exceeds max-height */
-.table-wrapper {
-    max-height: 450px;
-    overflow: auto;
-    display: inline-block;
+.bg-image {
+    /* This background image was created using AI: https://pixlr.com/de/ */
+    background-image: url('../img/tree_background.png');
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    height: 100vh;
 }

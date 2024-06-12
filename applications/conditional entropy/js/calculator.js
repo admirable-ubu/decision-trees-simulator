@@ -1,19 +1,25 @@
-import { checkInput } from '../../../lib/input-check.js';
-import { entropy } from '../../../lib/entropy-calculator.js';
+import { checkInput } from '../../lib/input-check.js';
+import { entropy } from '../../lib/entropy-calculator.js';
 
 const parseIntBase = 10;
 const ratioColumnIndex = 3;
 
-function calcRatio(tBodyRef, instanceVals) {
+/**
+ * Calculates the sums and ratios for each category
+ * @param {*} tBodyRef The HTML table body element
+ * @param {*} inputElements A HTMLCollection containing the HTML input elements that contain the input values
+ * @returns An array containing the sums and ratios of each category
+ */
+function calcRatio(tBodyRef, inputElements) {
     var sum = 0;
     var rowSums = [];
-    for (var i = 0; i < instanceVals.length; i++) {
-        var currentVal = parseInt(instanceVals[i].value, parseIntBase);
+    for (var i = 0; i < inputElements.length; i++) {
+        var currentVal = parseInt(inputElements[i].value, parseIntBase);
         sum += currentVal;
 
         // Calculate the sum of the row's instance values
         if (i % 2) {
-            rowSums.push(parseInt(instanceVals[i - 1].value, parseIntBase) + currentVal);
+            rowSums.push(parseInt(inputElements[i - 1].value, parseIntBase) + currentVal);
         }
     }
 
@@ -39,6 +45,13 @@ function calcRatio(tBodyRef, instanceVals) {
     return [rowSums, ratioVals];
 }
 
+/**
+ * Calculates the entropy for each category
+ * @param {*} rowSums An array containing each category's cumulative sum of instances
+ * @param {*} tBodyRef The HTML table body element
+ * @param {*} instanceVals A HTMLCollection containing the HTML input elements that contain the input values
+ * @returns An array containing the entropy of each category
+ */
 function calcEntropyCat(rowSums, tBodyRef, instanceVals) {
     // Get the Class values for each category
     var rowValues = [];
@@ -68,6 +81,10 @@ function calcEntropyCat(rowSums, tBodyRef, instanceVals) {
 
 }
 
+/**
+ * Calculates the conditional entropy for the whole dataset/all given input values
+ * @returns Return to cancel the calculation if any input is invalid
+ */
 function calcCondEntropy() {
     // Calculate ratios and Entropies for each category first
     var table = document.getElementById('table-cond-entropy');

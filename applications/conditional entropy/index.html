@@ -3,9 +3,9 @@
 
 <head>
     <link rel="stylesheet" href="css/styles.css" />
-    <script src="lib/jquery-3.7.1.min.js"></script>
-    <script type="module" src="../../lib/input-check.js"></script>
-    <script type="module" src="../../lib/entropy-calculator.js"></script>
+    <script src="../lib/jquery-3.7.1.min.js"></script>
+    <script type="module" src="../lib/input-check.js"></script>
+    <script type="module" src="../lib/entropy-calculator.js"></script>
     <script type="module" src="js/catNumHandler.js"></script>
     <script type="module" src="js/calculator.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -26,9 +26,10 @@
     <header class="py-3 mb-4 border-bottom bg-body-secondary bg-opacity-75 ">
         <div class="container d-flex flex-wrap align-items-center justify-content-center ">
             <a href="https://www.ubu.es" class="d-flex align-items-center me-2 ">
-                <img src="img/ubulogocolorfull.png" width="100" height="50">
+                <img src="../img/ubulogocolorfull.png" width="100" height="50">
             </a>
-            <span class="fw-bold fs-5 ms-2 me-2 ">Decision Tree Simulator</span>
+            <a href="../../index.html" class="fw-bold fs-5 ms-2 me-2 nav-link link-dark link-opacity-50-hover">Decision
+                Tree Simulator</a>
             <ul class="nav me-auto mx-auto">
                 <li class="nav-item">
                     <a href="../entropy/" class="nav-link link-dark px-2 link-opacity-50-hover ">Entropy</a>
@@ -66,7 +67,15 @@
                             <p class="card-text fw-light">
                                 In the context of classification problems, conditional entropy quantifies the
                                 uncertainty of a target variable \( Y \), which describes the set of class labels, given
-                                a value/category \( x \) of the feature \( X \).
+                                a category/value \( x \) of the attribute \( X \).
+                            <ul class="card-text fw-light">
+                                <li>
+                                    Note: The term "category" (of an attribute) usually refers to categorical or
+                                    nominal values, while "value" (of an attribute) usually refers to numerical values.
+                                    This application only uses categorical values in practice but will use both terms
+                                    for theoretical information.
+                                </li>
+                            </ul>
                             </p>
                             <a href="https://en.wikipedia.org/wiki/Conditional_entropy"
                                 class="btn btn-outline-dark ">Learn more</a>
@@ -96,13 +105,15 @@
                                 Where:
                             </p>
                             <ul class="card-text fw-light">
-                                <li>\( X \) is the set of values/categories for the first feature</li>
-                                <li>\( Y \) is the set of values for the class labels</li>
-                                <li>\( p(x) \) is the proportion between the number of instances with the value \( x \)
+                                <li>\( X \) is the set of categories/values of the first attribute</li>
+                                <li>\( Y \) is the set of categories/values of the class attribute</li>
+                                <li>\( p(x) \) is the proportion between the number of instances with the category/value
+                                    \( x \)
                                     and the size of the dataset</li>
                             </ul>
                             <p class="card-text fw-light">
-                                Calculating the conditional entropies for the individual values \( x \) of feature \(
+                                Calculating the conditional entropies for the individual categories/values \( x \) of
+                                attribute \(
                                 X \) (depicted as \( E(Category) \) in the calculator below) is possible with the
                                 following formula:
                             </p>
@@ -113,11 +124,11 @@
                                 Where:
                             </p>
                             <ul class="card-text fw-light">
-                                <li>\( p(y|x) \) is the proportion of instances in the dataset with feature
-                                    value \( x \) that also have the class value \( y \)</li>
+                                <li>\( p(y|x) \) is the proportion of instances in the dataset with attribute
+                                    category/value \( x \) that also have the class label \( y \)</li>
                             </ul>
                             <p class="card-text fw-light">
-                                It sums over all the possible values of the target variable \( Y \).
+                                It sums over all the possible categories/values of the class attribute \( Y \).
                             </p>
                             </p>
                         </div>
@@ -162,7 +173,7 @@
                 <div class="col-auto d-flex justify-content-center ">
                     <div class="table-wrapper">
                         <table class="table caption-top" id="table-cond-entropy">
-                            <caption>Example feature</caption>
+                            <caption>Example attribute</caption>
                             <thead class="sticky-top">
                                 <tr>
                                     <th></th>
@@ -170,7 +181,7 @@
                                     <th>Class 2</th>
                                     <th>Ratio</th>
                                     <th>E(Category)</th>
-                                    <th class="text-center ">CE(Feature)</th>
+                                    <th class="text-center ">CE(Attribute)</th>
                                 </tr>
                             </thead>
                             <tbody>
