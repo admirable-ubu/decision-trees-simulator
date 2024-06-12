@@ -3,9 +3,9 @@
 
 <head>
     <script src="lib/d3.v7.min.js"></script>
-    <script src="lib/jquery-3.7.1.min.js"></script>
-    <script type="module" src="../../lib/input-check.js"></script>
-    <script type="module" src="../../lib/entropy-calculator.js"></script>
+    <script src="../lib/jquery-3.7.1.min.js"></script>
+    <script type="module" src="../lib/input-check.js"></script>
+    <script type="module" src="../lib/entropy-calculator.js"></script>
     <script type="module" src="js/calculator.js"></script>
     <script type="module" src="js/classNumHandler.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -20,7 +20,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binary entropy function</title>
+    <title>Entropy calculator</title>
 </head>
 
 <body>
@@ -28,9 +28,9 @@
     <header class="py-3 mb-4 border-bottom bg-body-secondary bg-opacity-75 ">
         <div class="container d-flex flex-wrap align-items-center justify-content-center ">
             <a href="https://www.ubu.es" class="d-flex align-items-center me-2 ">
-                <img src="img/ubulogocolorfull.png" width="100" height="50">
+                <img src="../img/ubulogocolorfull.png" width="100" height="50">
             </a>
-            <span class="fw-bold fs-5 ms-2 me-2 ">Decision Tree Simulator</span>
+            <a href="../../index.html" class="fw-bold fs-5 ms-2 me-2 nav-link link-dark link-opacity-50-hover">Decision Tree Simulator</a>
             <ul class="nav me-auto mx-auto">
                 <li class="nav-item">
                     <a href="../entropy/" class="nav-link link-dark px-2 opacity-50 ">Entropy</a>
@@ -86,7 +86,7 @@
                         data-parent="#accordionInfo">
                         <div class="card-body ">
                             <p class="card-text fw-light"></p>
-                            The entropy of a dataset with respect to a target variable is calculated using the
+                            The entropy of a dataset with respect to a target/class variable is calculated using the
                             following formula:
                             </p>
                             <p class="card-text fw-light">
@@ -98,7 +98,7 @@
                             <ul class="card-text fw-light">
                                 <li>\(X\) is the dataset</li>
                                 <li>\(n\) is the number of classes</li>
-                                <li>\(p_i\) is the proportion of instances belonging to class \(i\)</li>
+                                <li>\(p_i\) is the proportion of instances (data points/rows) belonging to class \(i\)</li>
                             </ul>
                         </div>
                     </div>
@@ -167,7 +167,7 @@
                     <div class="col-xl-7 col-lg-8 col-md-6">
                         <div class="table-wrapper">
                             <table class="table caption-top table-hover" id="table-classes">
-                                <caption>Example feature</caption>
+                                <caption>Example attribute</caption>
                                 <thead class="sticky-top">
                                     <tr>
                                         <th>Classes</th>
@@ -227,7 +227,7 @@
                                 </tbody>
                                 <tfoot class="table-group-divider" style="border-bottom: hidden;">
                                     <tr>
-                                        <td>E(Feature):</td>
+                                        <td>E(Attribute):</td>
                                         <td>
                                             <div id="sum-entropy">1.00</div>
                                         </td>
@@ -354,8 +354,8 @@
             .attr("stroke-width", 2)
             .attr("d", line);
 
+        // Draw point on x-axis
         function drawNewPoint(points) {
-            // Draw point on x-axis
             svg.append("circle")
                 .attr("r", 3)
                 .attr("fill", "red")
@@ -365,8 +365,8 @@
                 .attr("cy", yScale(0));
         }
 
+        // Draw line between point and entropy graph
         function drawNewLine(points) {
-            // Draw line between point and entropy graph
             svg.append("path")
                 .datum(points)
                 .attr("fill", "red")
@@ -377,12 +377,13 @@
                 .attr("id", "pointLine");
         }
 
+        // Remove the previous point and line
         function removePointLine() {
-            // Remove the previous point and line
             svg.select("#pointLine").remove();
             svg.selectAll("circle").remove();
         }
 
+        // Trigger the calculation of the entropy for the given input values
         function triggerCalcEntropy() {
             removePointLine();
             var points = calcEntropy();

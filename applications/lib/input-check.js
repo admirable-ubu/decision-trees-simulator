@@ -1,9 +1,14 @@
-export function checkInput(instanceVals) {
+/**
+ * For the entropy and conditional entropy calculator, check whether the given input by the user is valid
+ * @param {*} inputElements A HTMLCollection containing the HTML input elements that contain the input values
+ * @returns 0 if the input is valid; 1 otherwise
+ */
+export function checkInput(inputElements) {
     var invalidVal = false;
     var emptyInput = false;
 
     // Check if there are any negative values or empty inputs
-    for (const instanceVal of instanceVals) {
+    for (const instanceVal of inputElements) {
         var value = instanceVal.value;
         if (value < 0 || isNaN(value) || value % 1 !== 0) invalidVal = true;
         if (value == "") emptyInput = true;

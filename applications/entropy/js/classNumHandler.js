@@ -3,6 +3,10 @@ const classColumnIndex = 0;
 const instancesColumnIndex = 1;
 const probColumnIndex = 1;
 
+/**
+ * Create a HTML element that represents a remove button labeled '-'
+ * @returns The button element
+ */
 function createRemoveButton() {
     var removeButton = document.createElement("div");
     removeButton.classList.add("btn");
@@ -12,6 +16,9 @@ function createRemoveButton() {
     return removeButton;
 }
 
+/**
+ * Adds a class/row to both tables
+ */
 function addClass() {
     var tableClasses = document.getElementById('table-classes');
     var tableEntropy = document.getElementById('table-entropy');
@@ -84,6 +91,9 @@ function addClass() {
     valueCell.id = "p" + pCount;
 }
 
+/**
+ * Removes a class/row from both tables
+ */
 function removeClass() {
     var tableClasses = document.getElementById('table-classes');
     var tableEntropy = document.getElementById('table-entropy');

@@ -1,5 +1,5 @@
-import { checkInput } from '../../../lib/input-check.js';
-import { entropy } from '../../../lib/entropy-calculator.js';
+import { checkInput } from '../../lib/input-check.js';
+import { entropy } from '../../lib/entropy-calculator.js';
 
 const parseIntBase = 10;
 const probColumnIndex = 1;
@@ -7,6 +7,11 @@ const binaryClasses = 2;
 
 const data = graphFunction();
 
+/**
+ * Calculates the entropy function for the many data points that make up the binary entropy graph that is displayed
+ * @param {*} x x-value
+ * @returns Entropy value for x
+ */
 function E(x) {
     if (x < 0 || x > 1.00001) throw new Error("The Binary Entropy function was tried to be calculated with an invalid x value input");
 
@@ -18,7 +23,10 @@ function E(x) {
     return (-x) * Math.log2(x) - (1 - x) * Math.log2(1 - x);
 }
 
-// Returns array of points that represents E(x)
+/**
+ * Creates array of points that represents the binary entropy function E(x)
+ * @returns Data array 
+ */
 function graphFunction() {
     var pointNum = 1;
 
@@ -30,6 +38,11 @@ function graphFunction() {
     return data;
 }
 
+/**
+ * Calculates the cumulative sum of all values of the input elements
+ * @param {*} inputElements A HTMLCollection containing the HTML input elements that contain the input values
+ * @returns Cumulative sum of input values
+ */
 function calcSum(inputElements) {
     var sum = 0;
     for (const element of inputElements) {
@@ -49,6 +62,12 @@ function calcSum(inputElements) {
     return sum;
 }
 
+/**
+ * Calculates the p(robability) values of each input element
+ * @param {*} inputElements A HTMLCollection containing the HTML input elements that contain the input values
+ * @param {*} sum Cumulative sum of input values
+ * @returns Array containing each input element's p(robability) value
+ */
 function calcProbs(inputElements, sum) {
     var pValues = [];
     for (var i = 0; i < inputElements.length; i++) {
@@ -61,6 +80,11 @@ function calcProbs(inputElements, sum) {
     return pValues;
 }
 
+/**
+ * Calculates the position of the point corresponding to the the first class's proportion in the dataset/its x value
+ * @param {*} tableEntropy The HTML table element of the result entropy table
+ * @returns The point's coordinates (one on the x-axis, one that is touching the graph)
+ */
 function drawPoint(tableEntropy) {
     // FInd the closest data point to the x-value of p(Class 1)
     var targetXvalue = tableEntropy.tBodies[0].rows[0].cells[probColumnIndex].textContent;
@@ -90,6 +114,12 @@ function drawPoint(tableEntropy) {
 
 }
 
+/**
+ * Initiates the whole process of entropy calculation, given input values
+ * @returns Coordinates of the point that is to be drawn on the graph if entropy was calculated for 2 classes
+ * that are then used by the script section in index.html to draw the point and line; 
+ * None if not
+ */
 function calcEntropy() {
     var table = document.getElementById('table-classes');
     var inputElements = table.getElementsByTagName('input');

@@ -1,0 +1,25 @@
+/* Keep the footer at the bottom of the page, even if the page has too little content to reach the bottom of the screen */
+html {
+  position: relative;
+  min-height: 100%;
+  padding-bottom: 180px;
+}
+
+body {
+  margin-bottom: 180px;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 180px;
+}
+
+
+/* For making the table scroll vertically if it exceeds max-height */
+.table-wrapper {
+  max-height: 350px;
+  overflow: auto;
+  display: inline-block;
+}
