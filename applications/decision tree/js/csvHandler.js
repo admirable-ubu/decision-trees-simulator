@@ -1,5 +1,5 @@
 import { buildTree, destroyTree } from './tree.js';
-import { createTable } from './dataTable.js';
+import { createDataTable } from './dataTable.js';
 import { createValueTable, loadData } from './valueTable.js';
 import { initialStep } from './stepbystep.js';
 import { getDataInfo, getDataLink } from "../exampledata/dataInfo.js";
@@ -13,6 +13,12 @@ const dataset3 = "Iris";
 const dataset4 = "Mushrooms";
 const dataset5 = "Lenses";
 
+/**
+ * Gets all each attribute's distinct categories/values
+ * @param {*} data The dataset
+ * @param {*} attributes Array of the attribute names
+ * @returns Array of arrays that contain each attribute's distinct categories/values
+ */
 function getAttributes(data, attributes) {
     const attributeValues = attributes.map((key, index) => {
         const values = new Set();
@@ -25,6 +31,12 @@ function getAttributes(data, attributes) {
     return attributeValues;
 }
 
+/**
+ * Gets all the distinct label values and data rows
+ * @param {*} data The dataset
+ * @param {*} attributes Array of the attribute names
+ * @returns An array of all distinct label values and all data rows as an array of objects
+ */
 function getLabelValsDataRows(data, attributes) {
     const labelValues = new Set();
     const dataRows = data.slice(1).map(row => {
@@ -37,9 +49,13 @@ function getLabelValsDataRows(data, attributes) {
         return { attributes: attributeObj, label: label };
     });
 
-    return [Array.from(labelValues), dataRows]; 
+    return [Array.from(labelValues), dataRows];
 }
 
+/**
+ * Transform the parsed data into a form that can be used by the program
+ * @param {*} data The dataset
+ */
 function transformData(data) {
     const headers = data[0];
     const attributes = headers.slice(0, -1);
@@ -59,25 +75,24 @@ function transformData(data) {
     dataCsv['csvDataRows'] = dataRows;
 
     // Save to local storage
-    localStorage.setItem('csvData', JSON.stringify(dataCsv));
+    sessionStorage.setItem('csvData', JSON.stringify(dataCsv));
 
     // Reset everything and build the tree and tables based on the new data 
     var svgEl = document.getElementById(svgId);
     destroyTree(svgEl);
     buildTree();
 
-    createTable();
+    createDataTable();
     loadData();
     createValueTable(1);
     initialStep();
 }
 
+/**
+ * Parses the example data and displays the right information about the dataset
+ * @param {*} selectedExample The name of the selected example dataset
+ */
 function loadExampleData(selectedExample) {
-    var contContainer = document.getElementById("contentContainer");
-    if (contContainer.style.display == "none") {
-        contContainer.style.display = "block";
-    }
-
     var filePath = null;
     switch (selectedExample) {
         case dataset1:
@@ -106,6 +121,16 @@ function loadExampleData(selectedExample) {
                 transformData(parsedData.data);
             }
         });
+
+
+        let dataInfoContainer = document.getElementById("dataInfoContainer");
+        if (dataInfoContainer.style.display == "none") {
+            dataInfoContainer.style.display = "block";
+        }
+        let stepByStepContainer = document.getElementById("stepByStepContainer");
+        if (stepByStepContainer.style.display == "none") {
+            stepByStepContainer.style.display = "block";
+        }
 
         var currentDatasetSpan = document.getElementById('currentDatasetSpan');
         currentDatasetSpan.textContent = selectedExample;

@@ -31,7 +31,6 @@ function checkUserCsv(data) {
     const labelValsDataRows = getLabelValsDataRows(data, attributes);
     const labelVals = labelValsDataRows[0];
 
-    console.log(labelVals);
     if (labelVals.length > 2) {
         return tooManyLabelVals;
     }
@@ -54,6 +53,9 @@ function checkUserCsv(data) {
     return valid;
 }
 
+/**
+ * Handles the request of a user wanting to upload their own CSV dataset
+ */
 function handleUserCsv() {
     const fileInput = document.getElementById('csvFile');
     const file = fileInput.files[0];
@@ -64,12 +66,18 @@ function handleUserCsv() {
             complete: function (results) {
                 const data = results.data;
 
+                // Check if the introduced CSV file is valid
                 const checkReturn = checkUserCsv(data);
+                // CSV file is valid
                 if (checkReturn == valid) {
                     // Make content container visible if it was still hidden
-                    var contContainer = document.getElementById("contentContainer");
-                    if (contContainer.style.display == "none") {
-                        contContainer.style.display = "block";
+                    let dataInfoContainer = document.getElementById("dataInfoContainer");
+                    if (dataInfoContainer.style.display == "none") {
+                        dataInfoContainer.style.display = "block";
+                    }
+                    let stepByStepContainer = document.getElementById("stepByStepContainer");
+                    if (stepByStepContainer.style.display == "none") {
+                        stepByStepContainer.style.display = "block";
                     }
 
                     // Transform, store the data and build the tables and tree upon it
@@ -89,16 +97,18 @@ function handleUserCsv() {
 
                     var datasetCardBody = document.getElementById('datasetCardBody');
                     datasetCardBody.style.display = "none";
+                    
+                    // CSV file is invalid
                 } else if (checkReturn == tooManyRows) {
                     alert('The selected file has more than 150 instance rows. Please check the file requirements.');
                 } else if (checkReturn == tooManyCols) {
                     alert('The selected file has more than 25 columns. Please check the file requirements.');
                 } else if (checkReturn == tooManyLabelVals) {
-                    alert('The selected file has a target class with more than 2 distinct values. Please check the file requirements.');
+                    alert('The selected file has a class attribute with more than 2 distinct categories. Please check the file requirements.');
                 } else if (checkReturn == numericalVals) {
                     alert('The selected file includes numerical values. Please check the file requirements.');
                 } else if (checkReturn == notComplete) {
-                    alert('The number of values of at least one row in the selected file does not match the number of features. Please check the file requirements.');
+                    alert('The number of columns of at least one row in the selected file does not match the number of attributes. Please check the file requirements.');
                 }
             }
         });

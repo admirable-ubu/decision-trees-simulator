@@ -18,6 +18,9 @@ const indexBodyInfoGain = 5;
 
 const valueLabelsLength = 2;
 
+/**
+ * Creates table header for when a node is currently relevant
+ */
 function createHeaderForNode(tableEl) {
     var header = document.createElement('thead');
     var headerRow1 = document.createElement('tr');
@@ -46,6 +49,9 @@ function createHeaderForNode(tableEl) {
     tableEl.appendChild(header);
 }
 
+/**
+ * Creates table body for when a node is currently relevant
+ */
 function createBodyForNode(tableEl, step) {
     var body = document.createElement('tbody');
     body.classList.add('table-group-divider');
@@ -115,6 +121,9 @@ function createBodyForNode(tableEl, step) {
     tableEl.appendChild(body);
 }
 
+/**
+ * Creates the value table for when a node is currently relevant
+ */
 function createValueTableForNode(tableEl, step) {
     // Header
     createHeaderForNode(tableEl);
@@ -123,6 +132,9 @@ function createValueTableForNode(tableEl, step) {
     createBodyForNode(tableEl, step);
 }
 
+/**
+ * Creates the value table for when a leaf is currently relevant
+ */
 function createValueTableForLeaf(tableEl, step) {
     // Header
     var header = document.createElement('thead');
@@ -171,7 +183,7 @@ function createValueTableForLeaf(tableEl, step) {
     if(valueTableGroups[step - 1].includes(0)){
         footCell.textContent = 'All labels have the same value';
     } else{
-        footCell.textContent = 'There are no features left to split the current dataset on, so the most frequent class label was chosen';
+        footCell.textContent = 'There are no attributes left to split the current dataset on, so the most frequent class label was chosen';
     }
     footRow.appendChild(footCell);
     foot.appendChild(footRow);
@@ -179,14 +191,21 @@ function createValueTableForLeaf(tableEl, step) {
     tableEl.appendChild(foot);
 }
 
+/**
+ * Load the relevant data to be displayed in the table
+ */
 function loadData(){
-    let dataCsv = JSON.parse(localStorage.getItem('csvData'));
+    let dataCsv = JSON.parse(sessionStorage.getItem('csvData'));
     label = dataCsv[csvL];
     labelValues = dataCsv[csvLV];
 }
 
+/**
+ * Create the whole value table for the current step
+ * @param {*} step The current step
+ */
 function createValueTable(step) {
-    secondHeaderRowColLabels = ['Feature', 'Value', labelValues[0], labelValues[1], 'Ratio', 'E', 'CE', 'Info Gain']
+    secondHeaderRowColLabels = ['Attribute', 'Value', labelValues[0], labelValues[1], 'Ratio', 'E', 'CE', 'Info Gain']
 
     var tableDiv = document.getElementById('valueTable');
 

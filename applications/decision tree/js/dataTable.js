@@ -7,18 +7,31 @@ const csvA = 'csvAttributes';
 const csvL = 'csvLabel';
 const csvD = 'csvDataRows';
 
+/**
+ * Creates a table cell that contains the count of an instance of the current dataset 
+ * @returns The table cell element
+ */
 function createCountCell(){
     var countCell = document.createElement('td');
     countCell.style.borderRight = '1px solid black';
     return countCell;
 }
 
+/**
+ * Creates a table header cell that contains one of the labels
+ * @returns The table header cell element
+ */
 function createLabelCell(){
     var labelCell = document.createElement('th');
     labelCell.style.borderLeft = '1px solid black';
     return labelCell;
 }
 
+/**
+ * Creates the body rows for the data table
+ * @param {*} count Number of the body row
+ * @returns The body row for the specified number
+ */
 function createBodyRows(count){
     var bodyRow = document.createElement('tr');
     var bodyCell = createCountCell();
@@ -37,8 +50,11 @@ function createBodyRows(count){
     return bodyRow;
 }
 
-function createTable(){
-    let dataCsv = JSON.parse(localStorage.getItem('csvData'));
+/**
+ * Create the whole data table
+ */
+function createDataTable(){
+    let dataCsv = JSON.parse(sessionStorage.getItem('csvData'));
     data = dataCsv[csvD];
     attributes = dataCsv[csvA];
     label = dataCsv[csvL];
@@ -96,5 +112,5 @@ function createTable(){
     tableDiv.appendChild(tableEl);
 }
 
-export { createTable };
-export default createTable;
+export { createDataTable };
+export default createDataTable;

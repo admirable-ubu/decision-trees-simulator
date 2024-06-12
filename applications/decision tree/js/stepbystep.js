@@ -55,9 +55,9 @@ function highlightAttributes() {
             tHeadCols[i + 1].classList.add('table-warning');
             changedCells.push(tHeadCols[i + 1]);
 
-            // Get first appearance of the desired feature value
+            // Get first appearance of the desired attribute value
             var valueName = tRows[rowsToMark[0]].getElementsByTagName('td')[i + 1].textContent;
-            // First append feature name to the string
+            // First append attribute name to the string
             var rule = tHeadCols[i + 1].textContent;
             rule += "=" + valueName;
             currentRules.push(rule);

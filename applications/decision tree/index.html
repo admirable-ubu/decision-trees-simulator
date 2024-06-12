@@ -3,8 +3,8 @@
 
 <head>
     <link rel="stylesheet" href="css/styles.css" />
-    <script type="module" src="../../lib/entropy-calculator.js" defer></script>
-    <script type="module" src="../../lib/input-check.js" defer></script>
+    <script type="module" src="../lib/entropy-calculator.js" defer></script>
+    <script type="module" src="../lib/input-check.js" defer></script>
     <script type="module" src="js/dataTable.js" defer></script>
     <script type="module" src="js/stepbystep.js" defer></script>
     <script type="module" src="js/tree.js" defer></script>
@@ -21,12 +21,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="lib/jquery-3.7.1.min.js"></script>
+    <script src="../lib/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decision Tree</title>
+    <title>Decision Tree ID3</title>
 </head>
 
 <body>
@@ -34,9 +34,10 @@
     <header class="py-3 mb-4 border-bottom bg-body-secondary bg-opacity-75 ">
         <div class="container d-flex flex-wrap align-items-center justify-content-center ">
             <a href="https://www.ubu.es" class="d-flex align-items-center me-2 ">
-                <img src="img/ubulogocolorfull.png" width="100" height="50">
+                <img src="../img/ubulogocolorfull.png" width="100" height="50">
             </a>
-            <span class="fw-bold fs-5 ms-2 me-2 ">Decision Tree Simulator</span>
+            <a href="../../index.html" class="fw-bold fs-5 ms-2 me-2 nav-link link-dark link-opacity-50-hover">Decision
+                Tree Simulator</a>
             <ul class="nav me-auto mx-auto">
                 <li class="nav-item">
                     <a href="../entropy/" class="nav-link link-dark px-2 link-opacity-50-hover ">Entropy</a>
@@ -75,8 +76,8 @@
                             <p class="card-text fw-light">
                                 A decision tree consists of a tree-like structure where:
                             <ul class="card-text fw-light">
-                                <li>internal nodes, also called decision nodes, represent a decision based on a
-                                    feature</li>
+                                <li>internal nodes, also called decision nodes, represent a decision based on an
+                                    attribute</li>
                                 <li>branches represent the outcome of the decision</li>
                                 <li>leaf nodes represent the predicted class label</li>
                             </ul>
@@ -84,11 +85,14 @@
                             <p class="card-text fw-light">
                                 Decision trees are constructed using a top-down, recursive partitioning approach
                                 called "Top-Down Induction of Decision Trees (TDIDT)".
-                                The algorithm selects the best feature to split the dataset into subsets
+                                The algorithm selects the best attribute to split the dataset into subsets
                                 at each node based on a criterion, such as "Information Gain" or "Gini impurity"
                                 (this application uses "Information Gain").
                                 This process continues until all instances within a subset belong to the same class
-                                or have similar values and therefore represent a leaf node.
+                                or there are no more attributes to split the subset on.
+                                A leaf node is created that, in the former case, is assigned the class label that all
+                                instances in that subset belong to or, in the latter case, is assigned the most common
+                                class label of that subset.
                             </p>
                             <a href="https://en.wikipedia.org/wiki/Decision_tree" class="btn btn-outline-dark ">Learn
                                 more</a>
@@ -107,62 +111,55 @@
                         <div class="card-body ">
                             <p class="card-text fw-bold">Input:</p>
                             <ul class="card-text fw-light ">
-                                <li>Dataset \( S \) with features \( F \)</li>
-                                <li>Target feature \( Y \)</li>
+                                <li>Dataset \( S \)</li>
+                                <li>Attributes \( A \)</li>
                             </ul>
                             <p class="card-text fw-bold">Output:</p>
                             <ul class="card-text fw-light">
-                                <li>Decision Tree \( T \)</li>
+                                <li>Tree \( T \)</li>
                             </ul>
                             <p class="card-text fw-bold">Algorithm:</p>
                             <ol>
                                 <li class="card-text fw-light">
-                                    Start with dataset \( S \) as the root node of the tree
+                                    Dataset \( S \) will represent the root node of the current tree \( T \)
                                 </li>
                                 <li class="card-text fw-light">
-                                    Check if all instances in \( S \) belong to the <span class="fw-bold">same
-                                        class</span>:
+                                    Check if all instances in \( S \) belong to the same
+                                    class:
                                     <ul>
-                                        <li>If yes, create a leaf node with the class label and return \( T \)</li>
+                                        <li>If yes, create a leaf node with the corresponding class label and return the
+                                            node as \( T \)</li>
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
-                                    Check if the feature set \( F \) is <span class="fw-bold">empty</span>:
+                                    Check if the attribute set \( A \) is empty:
                                     <ul>
                                         <li>If yes, create a leaf node with the most frequent class label and
-                                            return \( T \)</li>
+                                            return the node as \( T \)</li>
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
-                                    Calculate the information gain for each feature in \( F \)
+                                    Calculate the information gain for each attribute in \( A \) and select \(
+                                    A_{\text{best}} \) as the attribute with the highest information gain
                                 </li>
                                 <li class="card-text fw-light">
-                                    Select the feature \( F_{\text{best}} \) with the <span class="fw-bold">highest
-                                        information gain</span>
+                                    Create a decision node containing \( A_{\text{best}} \)
                                 </li>
                                 <li class="card-text fw-light">
-                                    Make this current root node into a decision node for \( F_{\text{best}} \):
+                                    Split \( S \) into subsets based on the different categories/values of \(
+                                    A_{\text{best}} \)
+                                </li>
+                                <li class="card-text fw-light">
+                                    For each subset \( S_i \), do a <span class="fw-bold">recursion call</span> with:
                                     <ul>
-                                        <li>Split the dataset \( S \) into subsets based on the values of feature
-                                            \( F_{\text{best}} \)</li>
-                                    </ul>
-                                </li>
-                                <li class="card-text fw-light">
-                                    <span class="fw-bold">Recursively</span> apply the ID3 algorithm to each subset:
-                                    <ul>
-                                        <li>For each subset \( S_i \), create a child node</li>
-                                        <li><span class="fw-bold">Input:</span> Subset \( S_i \) with feature \(
-                                            F \setminus
-                                            \{F_{\text{best}}\} \), target feature \( Y \)</li>
+                                        <li><span class="fw-bold">Input:</span> Subset \( S_i \), attributes \(
+                                            A \setminus
+                                            \{A_{\text{best}}\} \)</li>
                                         <li><span class="fw-bold">Output:</span> Subtree \( T_i \)</li>
                                     </ul>
                                 </li>
                                 <li class="card-text fw-light">
-                                    Return the decision tree \( T \):
-                                    <ul>
-                                        <li>Decision tree \( T \) with root node \( F_{\text{best}} \) and subtree
-                                            \( T_i \) as children</li>
-                                    </ul>
+                                    Append \( T_i \) to \( T \)'s children and return \( T \)
                                 </li>
                             </ol>
                         </div>
@@ -182,21 +179,21 @@
                                 To calculate the Information Gain, the following formula is used:
                             </p>
                             <p class="card-text fw-light">
-                                \(I(S, F) =\)
+                                \(IG(S, A) =\)
                                 <a href="../entropy/index.html#calcInfoEntropy"
                                     style="text-decoration: none">\(E(S)\)</a>
                                 \( - \)
                                 <a href="../conditional entropy/index.html#calcInfoCondEntropy"
-                                    style="text-decoration: none">\(E(S|F)\)</a>
+                                    style="text-decoration: none">\(E(S|A)\)</a>
                             </p>
                             <p class="card-text fw-light">
                                 Where:
                             </p>
                             <ul class="card-text fw-light">
                                 <li>\(S\) is the dataset</li>
-                                <li>\(F\) is the feature/set of values of that feature</li>
+                                <li>\(A\) is the attribute/set of categories/values of that attribute</li>
                                 <li>\(E(S)\) is the entropy of the dataset \(S\)</li>
-                                <li>\(E(S|F)\) is the conditional entropy of the dataset given the feature \(F\)</li>
+                                <li>\(E(S|A)\) is the conditional entropy of the dataset given the attribute \(A\)</li>
                             </ul>
                         </div>
                     </div>
@@ -264,25 +261,26 @@
                                                             (Comma-Separated
                                                             Values) format and must not contain "" (single quotation
                                                             marks '' are allowed)</li>
-                                                        <li><strong>Categorical values:</strong> All features must only
+                                                        <li><strong>Categorical values:</strong> All attributes must
+                                                            only
                                                             have
                                                             categorical values (if you want to use numbers as
                                                             categorical values, make sure to put them in single
                                                             quotation marks, e.g., '5')</li>
                                                         <li><strong>Class Column:</strong> The class column, indicating
                                                             the target
-                                                            feature, must be the last column in your dataset</li>
-                                                        <li><strong>Maximum classes:</strong> The target class can only
+                                                            attribute, must be the last column in your dataset</li>
+                                                        <li><strong>Maximum class categories:</strong> The class attribute can only
                                                             have 2
-                                                            distinct values</li>
+                                                            distinct categories</li>
                                                         <li><strong>Maximum Rows:</strong> Your file must not contain
                                                             more than 150
-                                                            rows of data (not counting feature row)</li>
+                                                            rows of data (not counting attribute row)</li>
                                                         <li><strong>Maximum Columns:</strong> Your file must not contain
                                                             more than 25
                                                             columns</li>
-                                                        <li><strong>Completeness:</strong> The number of values in each
-                                                            row must be the same number as the amount of features as
+                                                        <li><strong>Completeness:</strong> The number of columns in each
+                                                            row must be the same number as the amount of attributes
                                                             specified in the
                                                             first row</li>
                                                     </ol>
@@ -328,7 +326,7 @@
         </div>
     </div>
     <!-- Dataset info card, tables, SVG tree -->
-    <div id="contentContainer" class="container pb-2" style="display: none;">
+    <div id="dataInfoContainer" class="container pb-2" style="display: none;">
         <!-- Dataset info card -->
         <div class="row m-2 justify-content-center">
             <div class="col-auto">
@@ -344,9 +342,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="stepByStepContainer" class="container-fluid" style="display: none;">
         <div class="row mb-4 justify-content-center">
             <!-- Step-by-step, SVG tree and legend -->
-            <div class="col-xl-7 col-lg-10 col-sm-12 col-12">
+            <div class="col-xxl-6 col-xl-7 col-lg-10 col-12">
                 <!-- Step counter -->
                 <div class="row pb-2 justify-content-center">
                     <div class="col-auto">
@@ -400,7 +400,7 @@
                     <div class="col-auto">
                         <ul class="list-group list-group-horizontal mt-1">
                             <li class="list-group-item d-flex align-items-center">
-                                <span class="color-box" style="background-color: #ADD8E6;"></span> Feature name
+                                <span class="color-box" style="background-color: #ADD8E6;"></span> Attribute name
                             </li>
                             <li class="list-group-item d-flex align-items-center">
                                 <span class="color-box " style="background-color: #FFDD77;"></span> Label value
@@ -471,20 +471,26 @@
                 </div>
             </div>
             <!-- Data table, value table -->
-            <div class="col-xl-5 col-sm-12 col-auto justify-content-center ">
-                <!-- Data table -->
-                <div class="row-auto mt-2 mb-2 justify-content-center d-flex">
-                    <div class="table-responsive">
-                        <div id="dataTable" class="table-wrapper">
+            <div class="col-xxl-6 col-xl-5 col-lg-10 col-12">
+                <div class="row justify-content-center d-flex">
+                    <div class="col-xxl-6 col-xl-12 col-lg-6 col-12">
+                        <!-- Data table -->
+                        <div class="row-auto justify-content-center d-flex">
+                            <div class="table-responsive">
+                                <div id="dataTable" class="table-wrapper">
 
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- Value table -->
-                <div class="row-auto justify-content-center d-flex">
-                    <div class="table-responsive">
-                        <div id="valueTable" class="table-wrapper">
+                    <div class="col-xxl-6 col-xl-12 col-lg-6 col-12">
+                        <!-- Value table -->
+                        <div class="row-auto justify-content-center d-flex">
+                            <div class="table-responsive">
+                                <div id="valueTable" class="table-wrapper">
 
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

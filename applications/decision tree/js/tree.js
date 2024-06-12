@@ -1,5 +1,5 @@
 import { goToStep } from './stepbystep.js';
-import { entropy } from '../../../lib/entropy-calculator.js';
+import { entropy } from '../../lib/entropy-calculator.js';
 
 const STD_LEAFHEIGHT = 133;
 const STD_NODEHEIGHT = 92;
@@ -73,7 +73,11 @@ class TreeNode {
 }
 
 
-
+/**
+ * Finds the most common label in a dataset
+ * @param {*} data The dataset
+ * @returns The most common label
+ */
 function mostCommonLabel(data) {
     let labels = [];
     data.forEach(function (row) {
@@ -108,6 +112,12 @@ function countLabels(labels) {
     return counts;
 }
 
+
+/**
+ * Calculates the entropy for a set of label values
+ * @param {*} labels Array of label values
+ * @returns The entropy of the array of label values
+ */
 function entropyLabels(labels) {
     // Count the occurrence of each label value
     let counts = countLabels(labels);
@@ -124,6 +134,13 @@ function entropyLabels(labels) {
     return e;
 }
 
+/**
+ * Calculates the information gain for an attribute
+ * @param {*} data The dataset
+ * @param {*} attribute The attribute
+ * @param {*} valTableGroup To store relevant values for the later created value table
+ * @returns The information gain of the attribute
+ */
 function infoGain(data, attribute, valTableGroup) {
     // Save the calculated values for each attribute for the value table
     let valTabAttribute = {};
@@ -217,6 +234,13 @@ function infoGain(data, attribute, valTableGroup) {
 }
 
 
+/**
+ * Finds the best attribute of a dataset
+ * @param {*} data The dataset
+ * @param {*} attributes The dataset's attributes
+ * @param {*} valTableGroup To store relevant values for the later created value table
+ * @returns The best attribute of the given dataset
+ */
 function findBestAttribute(data, attributes, valTableGroup) {
     let bestAttribute = null;
     let maxGain = 0;
@@ -230,6 +254,15 @@ function findBestAttribute(data, attributes, valTableGroup) {
     return bestAttribute;
 }
 
+/**
+ * The ID3 algorithm that creates a decision tree structure
+ * @param {*} data the dataset of the current node
+ * @param {*} attributes the considered attributes
+ * @param {*} prevBranchVal the label of the branch path for which the current node serves as the destination node
+ * @param {*} nodeId the current node id
+ * @param {*} leafId the current leaf id
+ * @returns The tree, node id, and leaf id (for correct initialization through the recursion calls)
+ */
 function id3(data, attributes, prevBranchVal, nodeId, leafId) {
     if (data.length === 0) return null;
     let allPositive = true;
@@ -306,7 +339,7 @@ function id3(data, attributes, prevBranchVal, nodeId, leafId) {
             valTableGroup = [class1, class2];
             valueTableGroups.push(valTableGroup);
 
-            tree.children.push(new TreeNode(leafId, null, new NodeValues(class1, class2, n, e), true, mostCommonLabel(subset), prevBranchVal));
+            tree.children.push(new TreeNode(leafId, null, new NodeValues(class1, class2, n, e), true, mostCommonLabel(data), prevBranchVal));
         } else {
             tree.prevBranchVal = prevBranchVal;
             let returnVals = id3(subset, remainingAttributes, value, nodeId, leafId);
@@ -318,6 +351,12 @@ function id3(data, attributes, prevBranchVal, nodeId, leafId) {
     return [tree, nodeId, leafId];
 }
 
+/**
+ * Assigns parents to each node of a tree structure
+ * @param {*} node The current node
+ * @param {*} parent The parent of the current node
+ * @returns Returns if the current node is null
+ */
 function assignParents(node, parent = null) {
     if (!node) return;
 
@@ -330,6 +369,10 @@ function assignParents(node, parent = null) {
     }
 }
 
+/**
+ * Create new use element to display the node or branch path
+ * @returns The use element
+ */
 function createNewUse(id, href, x, y, width, height) {
     // Create a new 'use' element and set the node's position attributes
     let newUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
@@ -573,7 +616,9 @@ function createBranch(nodeId, x1, y1, x2, y2, value, sizeRatio) {
     return newUse;
 }
 
-// Creates/draws the nodes and adds them to groups
+/**
+ * Creates the nodes and adds them to groups
+ */
 function createNodes(node, nodeIndex, svgEl, groupId, nodeWidth, nodeHeight, leafHeight, sizeRatio) {
     let group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     group.setAttribute("id", groupId);
@@ -613,43 +658,11 @@ function createNodes(node, nodeIndex, svgEl, groupId, nodeWidth, nodeHeight, lea
     return groupId;
 }
 
-// Calculate the tree's depth (including the root node)
-function calcTreeDepth(rootNode) {
-    if (!rootNode) return 0;
-    if (rootNode.children.length === 0) return 1;
-
-    let maxDepth = 0;
-
-    rootNode.children.forEach(child => {
-        maxDepth = Math.max(maxDepth, calcTreeDepth(child));
-    });
-
-    return maxDepth + 1;
-}
-
-// Calculate the tree's width by getting the maximum amount of nodes a row has
-function calcTreeWidth(rootNode) {
-    if (!rootNode) return 0;
-    if (rootNode.children.length === 0) return 0;
-
-    let maxWidth = 0;
-    let maxWidth2 = 0;
-
-    rootNode.children.forEach(child => {
-        maxWidth++;
-        child.children.forEach(() => {
-            maxWidth2++;
-        });
-    });
-    maxWidth = Math.max(maxWidth, maxWidth2);
-
-    rootNode.children.forEach(child => {
-        maxWidth = Math.max(maxWidth, calcTreeWidth(child));
-    });
-
-    return maxWidth;
-}
-
+/**
+ * Calculate the amount of nodes on each level in a tree structure
+ * @param {*} root The root node of a tree structure
+ * @returns The levels with each one containing the amount of nodes that is in it
+ */
 function countNodesAtEachLevel(root) {
     if (!root) {
         return [];
@@ -675,7 +688,7 @@ function countNodesAtEachLevel(root) {
 
 /**
  * Calculates the initial x values for all nodes
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function calcInitialX(node, nodeIndex, columnWidth, currentLevel = 0) {
     for (let i = 0; i < node.children.length; i++) {
@@ -718,7 +731,7 @@ function calcInitialX(node, nodeIndex, columnWidth, currentLevel = 0) {
 
 /**
  * Checks if subtrees of a node are overlapping
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function checkForConflicts(node, columnWidth, currentLevel, nodeIndex) {
     // Nodes should at least be one column width apart from each other
@@ -766,7 +779,7 @@ function checkForConflicts(node, columnWidth, currentLevel, nodeIndex) {
 
 /**
  * Centers the nodes that are in between two nodes on the edge
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function centerNodesBetween(leftNode, rightNode, leftIndex, rightIndex) {
     let numNodesBetween = (rightIndex - leftIndex) - 1;
@@ -791,7 +804,7 @@ function centerNodesBetween(leftNode, rightNode, leftIndex, rightIndex) {
 
 /**
  * Calculates the left edges of a node and its children
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function calcLeftEdges(node, modSum, currentLevel, edges = {}) {
     if (edges[currentLevel] == null) {
@@ -811,7 +824,7 @@ function calcLeftEdges(node, modSum, currentLevel, edges = {}) {
 
 /**
  * Calculates the right edges of a node and its children
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function calcRightEdges(node, modSum, currentLevel, edges = {}) {
     if (edges[currentLevel] == null) {
@@ -831,7 +844,7 @@ function calcRightEdges(node, modSum, currentLevel, edges = {}) {
 
 /**
  * Checks if any nodes have gone out of bounds on the left side of the SVG
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function checkInBounds(node) {
     let leftEdges = calcLeftEdges(node, 0, 0);
@@ -852,7 +865,7 @@ function checkInBounds(node) {
 
 /**
  * Traverses the tree one last time to perform shifts based on a child's parent's mod value
- * Based on the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
+ * Inspired by the code provided by Rachel Lim at {@link https://rachel53461.wordpress.com/2014/04/20/algorithm-for-drawing-trees/}
  */
 function calcFinalPositions(node, modSum, leafHeight) {
     node.x += modSum;
@@ -869,7 +882,9 @@ function calcFinalPositions(node, modSum, leafHeight) {
     }
 }
 
-// Centers the tree in the SVG if there are still space left on the right side
+/**
+ * Centers the tree in the SVG if there are still space left on the right side
+ */
 function centerTree(node, nodeWidth) {
     let rightEdges = calcRightEdges(node, 0, 0);
     let rightEdgesVals = Object.values(rightEdges).map(Number);
@@ -883,6 +898,10 @@ function centerTree(node, nodeWidth) {
     }
 }
 
+/**
+ * Calculates the positions of each node in a given tree structure
+ * Own implementation of the Reingold-Tilford algorithm
+ */
 function calcPositions(root, nodeWidth, leafHeight, columnWidth) {
     let queue = [root];
 
@@ -894,8 +913,6 @@ function calcPositions(root, nodeWidth, leafHeight, columnWidth) {
             queue.push(child);
         });
     }
-
-    console.log(decisionTree);
 
     // Calculate initial positions
     calcInitialX(root, 0, columnWidth);
@@ -961,6 +978,9 @@ function transformDataTableGroups() {
     }
 }
 
+/**
+ * Builds the SVG tree
+ */
 function buildSvgTree() {
     // Get array that holds the amount of nodes in each level/row
     let levels = countNodesAtEachLevel(decisionTree);
@@ -998,8 +1018,11 @@ function buildSvgTree() {
     createNodes(decisionTree, 0, svgEl, "g1", actualNodeWidth, nodeHeight, leafHeight, sizeRatio);
 }
 
+/**
+ * Builds the tree structure and the SVG tree
+ */
 function buildTree() {
-    let dataCsv = JSON.parse(localStorage.getItem('csvData'));
+    let dataCsv = JSON.parse(sessionStorage.getItem('csvData'));
     data = dataCsv[csvD];
     attributes = dataCsv[csvA];
     attributeValues = dataCsv[csvAV];
@@ -1014,46 +1037,12 @@ function buildTree() {
     nodeCount = +treeValues[1].substring(1) - 1;
     leafCount = +treeValues[2].substring(1) - 1;
 
-    // let newNode = new TreeNode("n4", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test1');
-    // let newNode2 = new TreeNode("n5", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test2');
-    // let newNode3 = new TreeNode("n6", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test3');
-    // let newNode4 = new TreeNode("n7", "testAttr", new NodeValues(3, 3, 6, 0.5), false, null, 'test4');
-    // let newLeaf = new TreeNode("l6", null, new NodeValues(3, 0, 3, 0), true, 'Yes', 'testl1');
-    // let newLeaf2 = new TreeNode("l7", null, new NodeValues(0, 3, 3, 0), true, 'No', 'testl2');
-    // let newLeaf3 = new TreeNode("l8", null, new NodeValues(0, 3, 3, 0), true, 'no', 'testl3');
-    // let newLeaf4 = new TreeNode("l9", null, new NodeValues(0, 3, 3, 0), true, 'no', 'testl4');
-    // decisionTree.children.push(newNode);
-    // decisionTree.children.push(newNode2);
-    // decisionTree.children[3].children.push(newLeaf);
-    // decisionTree.children[3].children.push(newLeaf2);
-    // decisionTree.children[2].children.push(newNode);
-    // decisionTree.children[2].children.push(newNode2);
-    // decisionTree.children[2].children.push(newNode3);
-    // decisionTree.children[2].children.push(newNode4);
-    // decisionTree.children[2].children.push(newLeaf);
-    // decisionTree.children[2].children.push(newLeaf2);
-    // decisionTree.children[2].children[2].children.push(newLeaf3);
-    // decisionTree.children[2].children[2].children.push(newLeaf4);
-    // decisionTree.children.push(newLeaf3);
-    // decisionTree.children.push(newLeaf4);
-    // decisionTree.children.splice(2, 1);
-    // decisionTree.children.splice(1, 1);
-    // decisionTree.children.push(newNode);
-    // console.log(decisionTree);
-    // decisionTree.children[1].children.push(newNode2);
-    // console.log(decisionTree);
-    // decisionTree.children[1].children[0].children.push(newNode3);
-    // decisionTree.children[1].children[0].children[0].children.push(newLeaf);
-    // decisionTree.children[1].children[0].children[0].children.push(newLeaf2);
-
     // Assign parent to each child node
     assignParents(decisionTree);
 
     // Prepare data table groups for the step-by-step visualization
     dataTableGroupsAddColumns(decisionTree);
     transformDataTableGroups();
-
-    console.log(decisionTree);
 
     // Get SVG sizes
     let svgSizes = calcSvgSize();
@@ -1063,14 +1052,11 @@ function buildTree() {
 
     // Build the SVG tree
     buildSvgTree();
-
-    // let svg = document.getElementById(svgId);
-    // let groups = svg.getElementsByTagName('g');
-    // for (const group of groups) {
-    //     group.style.display = "block";
-    // }
 }
 
+/**
+ * Destroy the SVG tree for when a new dataset is loaded
+ */
 function destroyTree(svgEl) {
     // Remove all the groups in which the use elements are located
     for (let i = 0; i < nodeCount + leafCount; i++) {
@@ -1114,6 +1100,9 @@ function destroyTree(svgEl) {
     }
 }
 
+/**
+ * Reset each node's positional values for when a new dataset is loaded
+ */
 function resetPosVals(node) {
     node.x = 0;
     node.y = 0;
@@ -1124,6 +1113,10 @@ function resetPosVals(node) {
     });
 }
 
+/**
+ * Calculates the SVG container's size
+ * @returns Width and height of the SVG container
+ */
 function calcSvgSize() {
     let svgEl = document.getElementById(svgId);
     const rect = svgEl.getBoundingClientRect();
@@ -1131,17 +1124,20 @@ function calcSvgSize() {
     const width = rect.width;
     const height = rect.height;
 
-    console.log('SVG Width:', width);
-    console.log('SVG Height:', height);
-
     return [width, height];
 }
 
+/**
+ * Resize the SVG viewbox for when the browser window is resized
+ */
 function resizeViewBox() {
     let svgEl = document.getElementById(svgId);
     svgEl.setAttribute('viewBox', '0 0 ' + svgWidth + ' ' + svgHeight);
 }
 
+/**
+ * Handle a resize of the browser window
+ */
 function handleResize() {
     let newSizes = calcSvgSize();
     if (newSizes[0] != svgWidth || newSizes[1] != svgHeight) {
@@ -1157,8 +1153,7 @@ function handleResize() {
         goToStep();
     }
 }
-
 window.onresize = handleResize;
 
-export { mostCommonLabel, entropyLabels, infoGain, findBestAttribute, id3, calcTreeDepth, calcTreeWidth, createNode, createLeaf, createBranch, buildTree, destroyTree, nodeCount, leafCount, dataTableGroups, valueTableGroups }
+export { mostCommonLabel, entropyLabels, infoGain, findBestAttribute, id3, createNode, createLeaf, createBranch, buildTree, destroyTree, nodeCount, leafCount, dataTableGroups, valueTableGroups }
 export default buildTree;
