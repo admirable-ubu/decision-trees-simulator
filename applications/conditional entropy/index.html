@@ -130,6 +130,19 @@
                             <p class="card-text fw-light">
                                 It sums over all the possible categories/values of the class attribute \( Y \).
                             </p>
+                            <br>
+                            <p class="card-text fw-light">
+                            <b>For example</b>, consider the class (\(Y\)) sample space: \(\text{Play golf} = \{\text{yes}, \text{no}\}\), and the attribute (\(X\)) sample space: \(\text{Outlook} = \{\text{Sunny}, \text{Rainy}\}\). The conditional entropy is expressed as:
+                            </p>
+                            <p class="card-text fw-light">
+                                \[ E(\text{Play golf} | \text{Outlook}) = \sum_{x \in \text{Outlook}} p(x) E(\text{Play golf} | \text{Outlook} = x) \]
+                            </p>
+                            <p class="card-text fw-light">
+                                Specifically, for the category "Sunny," we can calculate:
+                            </p>
+                            <p class="card-text fw-light">
+                                \[ E(\text{Play golf} | \text{Outlook} = \text{Sunny}) = - \sum_{y \in \text{Play golf}} p(y|\text{Sunny}) \log_2(p(y|\text{Sunny})) \] 
+                            </p>
                             </p>
                         </div>
                     </div>
@@ -173,7 +186,7 @@
                 <div class="col-auto d-flex justify-content-center ">
                     <div class="table-wrapper">
                         <table class="table caption-top" id="table-cond-entropy">
-                            <caption>Example attribute</caption>
+                            <caption>Example attribute (\(Y\))</caption>
                             <thead class="sticky-top">
                                 <tr>
                                     <th></th>
