@@ -463,7 +463,7 @@ function createNode(nodeId, n, e, attribute, x, y, width, height) {
     checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#nodeN'));
 
     // Entropy can never be too wide (only values between 0 and 1 with a fixed 2 decimal points are displayed)
-    clonedTemplate.querySelector('#nodeE').textContent += e;
+    clonedTemplate.querySelector('#nodeIG').textContent += e;
 
     clonedTemplate.querySelector('#nodeAttribute').textContent = attribute;
     checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#nodeAttribute'));
@@ -514,7 +514,7 @@ function createLeaf(leafId, n, class1, class2, e, label, x, y, width, height) {
     checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafNo'));
 
     // Entropy can never be too wide (only values between 0 and 1 with a fixed 2 decimal points are displayed)
-    clonedTemplate.querySelector('#leafE').textContent += e;
+    clonedTemplate.querySelector('#leafIG').textContent += e;
 
     clonedTemplate.querySelector('#leafLabel').textContent = label;
     checkNodeTextTooWide(svgEl, clonedTemplate.querySelector('#leafLabel'));
