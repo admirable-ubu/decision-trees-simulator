@@ -95,11 +95,11 @@
                         <div class="card-body ">
                             <p class="card-text fw-light">
                             <p class="card-text fw-light">
-                                For a binary classification problem, conditional entropy \( E(Y|X) \) is calculated
+                                For a binary classification problem, conditional entropy \( H(Y \mid X) \) is calculated
                                 using the following formula:
                             </p>
                             <p class="card-text fw-light">
-                                \[ E(Y|X) = \sum_{x \in X} p(x) E(Y|X = x) \]
+                                \[ H(Y \mid X) = \sum_{x \in X} p(x) H(Y \mid X = x) \]
                             </p>
                             <p class="card-text fw-light">
                                 Where:
@@ -114,17 +114,17 @@
                             <p class="card-text fw-light">
                                 Calculating the conditional entropies for the individual categories/values \( x \) of
                                 attribute \(
-                                X \) (depicted as \( E(Category) \) in the calculator below) is possible with the
+                                X \) (depicted as \( H(Category) \) in the calculator below) is possible with the
                                 following formula:
                             </p>
                             <p class="card-text fw-light">
-                                \[ E(Y|X = x) = - \sum_{y \in Y} p(y|x)\log_2(p(y|x)) \]
+                                \[ H(Y \mid X = x) = - \sum_{y \in Y} p(y \mid x)\log_2(p(y \mid x)) \]
                             </p>
                             <p class="card-text fw-light">
                                 Where:
                             </p>
                             <ul class="card-text fw-light">
-                                <li>\( p(y|x) \) is the proportion of instances in the dataset with attribute
+                                <li>\( p(y \mid x) \) is the proportion of instances in the dataset with attribute
                                     category/value \( x \) that also have the class label \( y \)</li>
                             </ul>
                             <p class="card-text fw-light">
@@ -135,13 +135,13 @@
                             <b>For example</b>, consider the class (\(Y\)) sample space: \(\text{Play golf} = \{\text{yes}, \text{no}\}\), and the attribute (\(X\)) sample space: \(\text{Outlook} = \{\text{Sunny}, \text{Rainy}\}\). The conditional entropy is expressed as:
                             </p>
                             <p class="card-text fw-light">
-                                \[ E(\text{Play golf} | \text{Outlook}) = \sum_{x \in \text{Outlook}} p(x) E(\text{Play golf} | \text{Outlook} = x) \]
+                                \[ H(\text{Play golf} \mid \text{Outlook}) = \sum_{x \in \text{Outlook}} p(x) H(\text{Play golf} \mid \text{Outlook} = x) \]
                             </p>
                             <p class="card-text fw-light">
                                 Specifically, for the category "Sunny," we can calculate:
                             </p>
                             <p class="card-text fw-light">
-                                \[ E(\text{Play golf} | \text{Outlook} = \text{Sunny}) = - \sum_{y \in \text{Play golf}} p(y|\text{Sunny}) \log_2(p(y|\text{Sunny})) \] 
+                                \[ H(\text{Play golf} \mid \text{Outlook} = \text{Sunny}) = - \sum_{y \in \text{Play golf}} p(y \mid \text{Sunny}) \log_2(p(y \mid \text{Sunny})) \] 
                             </p>
                             </p>
                         </div>
@@ -190,15 +190,18 @@
                             <thead class="sticky-top">
                                 <tr>
                                     <th></th>
+                                    <th></th>
                                     <th>Class 1</th>
                                     <th>Class 2</th>
                                     <th>Ratio</th>
-                                    <th>E(Category)</th>
-                                    <th class="text-center ">CE(Attribute)</th>
+                                    <th>\(H(Y \mid X=x)\)</th>
+                                    <th>\(H(Y \mid X)\)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td id="ceCell" rowspan="3" style="vertical-align: middle;"><label
+                                            class="form-control-plaintext text-center fw-semibold  ">\(X\)</label></td>
                                     <td id="c1" class="text-center "><label class="form-control-plaintext ">Category
                                             1:</label></td>
                                     <td><input value=1 type=text class="form-control" /></td>

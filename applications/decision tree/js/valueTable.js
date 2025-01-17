@@ -205,7 +205,7 @@ function loadData(){
  * @param {*} step The current step
  */
 function createValueTable(step) {
-    secondHeaderRowColLabels = ['Attribute', 'Value', labelValues[0], labelValues[1], 'Ratio', 'E', 'CE', 'Info Gain']
+    secondHeaderRowColLabels = ['Attribute', 'Value', labelValues[0], labelValues[1], 'Ratio', 'H', 'Conditional H', 'Info Gain']
 
     var tableDiv = document.getElementById('valueTable');
 

@@ -179,7 +179,7 @@
                                 To calculate the Information Gain, the following formula is used:
                             </p>
                             <p class="card-text fw-light">
-                                \(IG(S, A) = E(S) - E(S|A)\)
+                                \(IG(S, A) = H(S) - H(S \mid A)\)
                             </p>
                             <p class="card-text fw-light">
                                 Where:
@@ -187,9 +187,9 @@
                             <ul class="card-text fw-light">
                                 <li>\(S\) is the dataset</li>
                                 <li>\(A\) is the attribute/set of categories/values of that attribute</li>
-                                <li>\(E(S)\) is the <a href="../entropy/index.html#calcInfoEntropy"
+                                <li>\(H(S)\) is the <a href="../entropy/index.html#calcInfoEntropy"
                                     style="text-decoration: none">entropy</a> of the dataset \(S\)</li>
-                                <li>\(E(S|A)\) is the <a href="../conditional entropy/index.html#calcInfoCondEntropy"
+                                <li>\(H(S \mid A)\) is the <a href="../conditional entropy/index.html#calcInfoCondEntropy"
                                     style="text-decoration: none">conditional entropy</a> of the dataset given the attribute \(A\)</li>
                             </ul>
                         </div>
