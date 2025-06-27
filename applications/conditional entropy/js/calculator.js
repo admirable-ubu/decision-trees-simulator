@@ -39,6 +39,11 @@ function calcRatio(tBodyRef, inputElements) {
         ratioVals.push(ratio);
         var ratioCell = tBodyRef.rows[i].getElementsByTagName('td')[ratioColumnIndex];
         var ratioLabel = ratioCell.getElementsByTagName('label')[0];
+
+        console.log(`Analizando fila ${i}`);
+        console.log('ratioCell:', ratioCell);
+        console.log('label en ratioCell:', ratioCell?.getElementsByTagName('label')[0]);
+
         ratioLabel.textContent = ratio.toFixed(2);
     }
 
