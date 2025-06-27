@@ -2,7 +2,7 @@ import { checkInput } from '../../lib/input-check.js';
 import { entropy } from '../../lib/entropy-calculator.js';
 
 const parseIntBase = 10;
-const ratioColumnIndex = 3;
+const ratioColumnIndex = 4;
 
 /**
  * Calculates the sums and ratios for each category
