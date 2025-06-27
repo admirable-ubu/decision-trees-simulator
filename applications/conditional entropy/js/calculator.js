@@ -2,7 +2,7 @@ import { checkInput } from '../../lib/input-check.js';
 import { entropy } from '../../lib/entropy-calculator.js';
 
 const parseIntBase = 10;
-const ratioColumnIndex = 3;
+const ratioColumnIndex = 4;
 
 /**
  * Calculates the sums and ratios for each category
@@ -37,12 +37,7 @@ function calcRatio(tBodyRef, inputElements) {
         // To not divide by 0 if all instance values are 0
         var ratio = sum === 0 ? 0 : rowSums[i] / sum;
         ratioVals.push(ratio);
-
-        // Index mismatch in the first row due to extra cell at the beginning of the row
-        var ratioCell = (i === 0)
-            ? tBodyRef.rows[i].getElementsByTagName('td')[ratioColumnIndex + 1]
-            : tBodyRef.rows[i].getElementsByTagName('td')[ratioColumnIndex];
-
+        var ratioCell = tBodyRef.rows[i].getElementsByTagName('td')[ratioColumnIndex];
         var ratioLabel = ratioCell.getElementsByTagName('label')[0];
 
         console.log(`Analizando fila ${i}`);
