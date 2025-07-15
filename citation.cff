@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article from preferred-citation and the software itself."
+authors:
+  - family-names: "Ramos Pérez"
+    given-names: "Ismael"
+  - family-names: "Lucas Pérez"
+    given-names: "Gadea"
+    orcid: "https://orcid.org/0009-0009-2258-8507"
+  - family-names: "Drefs Fernandes"
+    given-names:  "Daniel" 
+  - family-names: "Latorre Carmona"
+    given-names: "Pedro"
+    orcid: "https://orcid.org/0000-0001-6984-5173"
+  - family-names: "López Nozal"
+    given-names: "Carlos"
+    orcid: "https://orcid.org/0000-0001-8462-212X"
+title: "Simulador docente para la comprensión de la construcción de árboles de decisión ID3"
+url: "https://github.com/admirable-ubu/decision-trees-simulator"
+version: 1.0.0
+date-released: '2025-07-15'
+preferred-citation:
+  authors:
+   - family-names: "Ramos Pérez"
+    given-names: "Ismael"
+  - family-names: "Lucas Pérez"
+    given-names: "Gadea"
+    orcid: "https://orcid.org/0009-0009-2258-8507"
+  - family-names: "Drefs Fernandes"
+    given-names:  "Daniel" 
+  - family-names: "Latorre Carmona"
+    given-names: "Pedro"
+    orcid: "https://orcid.org/0000-0001-6984-5173"
+  - family-names: "López Nozal"
+    given-names: "Carlos"
+    orcid: "https://orcid.org/0000-0001-8462-212X"
+  title: "Simulador docente para la comprensión de la construcción de árboles de decisión ID3"
+  type: "conference-paper"
+  start: 269 
+  end:   276
+  year: 2025
+  collection-title: "Actas de las JENUI - Vol. 10 (2025). Disponible en  https://aenui.org/actas/fichas/JENUI_2025_031.html"
+  conference: "XXXI Jornadas sobre Enseñanza Universitaria de la Informática (JENUI)"
+  publisher:
+    address: Valladolid
