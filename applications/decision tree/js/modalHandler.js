@@ -60,7 +60,19 @@ function handleUserCsv() {
     const fileInput = document.getElementById('csvFile');
     const file = fileInput.files[0];
 
-    if (file && file.type == 'text/csv') {
+    const CSV_MIMES = new Set([
+        'text/csv',
+        'application/vnd.ms-excel',
+        'text/plain'
+    ]);
+
+    function isCsvFile(f) {
+        const nameOk = /\.csv$/i.test(f?.name || '');
+        const typeOk = CSV_MIMES.has((f?.type || '').toLowerCase());
+        return nameOk || typeOk;
+    }
+
+    if (file && isCsvFile(file)) {
         Papa.parse(file, {
             skipEmptyLines: true,
             complete: function (results) {
@@ -114,7 +126,7 @@ function handleUserCsv() {
         });
     } else if (!file) {
         alert('No file has been selected. Please select a CSV file and try again.');
-    } else if (file.type != 'text/csv') {
+    } else if (isCsvFile(file) == false) {
         alert('The selected file is not in CSV format. Please select a CSV file and try again.');
     } else {
         alert('An invalid file has been selected. Please check the file requirements.');
